@@ -1,0 +1,115 @@
+@keyframes moveUpDown {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.welcome-heading {
+  font-size: 2.5rem;
+
+  color: #051520;
+  /* Change to your preferred text color */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  /* Adjust the shadow properties as needed */
+}
+
+.animated-text {
+  animation: moveUpDown 2s infinite;
+  font-size: 1.2rem;
+  color: #fff;
+  /* Change to your preferred text color */
+  background-color: #2ecc71;
+  /* Change to your preferred background color */
+  padding: 10px;
+  /* Adjust padding as needed */
+  border-radius: 8px;
+  /* Add border-radius for rounded corners */
+}
+
+/* Additional styles for the navigation bar */
+.container {
+  padding: 10px;
+}
+
+body {
+  background-color: #f1f5fd;
+  margin: 0;
+}
+
+main {
+  flex: 1;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+
+.footer {
+  background-color: black;
+
+  text-align: center;
+}
+
+/* Add this CSS to your stylesheet */
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #3498db;
+  /* Change to your desired background color */
+  color: #fff;
+}
+
+.logo {
+  width: 80px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+h4 {
+  margin: 0;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+}
+
+.nav-links a {
+  color: #fff;
+  text-decoration: none;
+  margin-right: 20px;
+}
+
+.btn-outline-light {
+  color: #fff;
+  border-color: #fff;
+}
+
+.btn-outline-light:hover {
+  background-color: #fff;
+  color: #3498db;
+}
+
+.btn-light {
+  background-color: #fff;
+  color: #3498db;
+}
+
+.btn-light:hover {
+  background-color: #3498db;
+  color: #fff;
+}

@@ -1,0 +1,818 @@
+// .sidebar {
+//     position: fixed;
+//     top: 0;
+//     left: 0;
+//     height: 100vh;
+//     width: 320px;
+//     background-color: #fff;
+
+//     &__logo {
+//         display: grid;
+//         place-items: center;
+//         height: 120px;
+//         font-size: 1.5rem;
+//         font-weight: 700;
+//         font-family: 'Mochiy Pop P one', sans-serif;
+//     }
+
+//     &__menu {
+//         position: relative;
+
+//         &__item {
+//             display: flex;
+//             align-items: center;
+//             place-content: flex-start;
+//             padding: 1rem 3rem;
+//             font-size: 1.25rem;
+//             font-weight: 500;
+//             color: #555555;
+//             transition: color 0.3s ease-in-out;
+
+//             &.active {
+//                 color: #fff;
+//             }
+
+//             &__icon {
+//                 margin-right: 1rem;
+
+//                 i {
+//                     font-size: 1.75rem;
+//                 }
+//             }
+//         }
+
+//         &__indicator {
+//             position: absolute;
+//             top: 0;
+//             left: 50%;
+//             width: calc(100% - 40px);
+//             border-radius: 10px;
+//             background-color: #308efe;
+//             z-index: -1;
+//             transform: translateX(-50%);
+
+//             transition: 0.3s ease-in-out;
+//         }
+//     }
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import ProfilePage from "../../Pages/Profile";
+// // import Services from "../../Pages/Services";
+// // import Wallet from "../../Pages/Wallet";
+// import "./Sidebar.css";
+// import AssetMaintenance from "../../pages/AssetMaintenance";
+// import { Switch } from "@mui/material";
+
+// function Sidebar() {
+//     const [activeMenuItem, setActiveMenuItem] = useState("");
+//     const navigate = useNavigate();
+
+//     const handleLogout = () => {
+//         navigate("/");
+//         window.location.reload(true);
+//     };
+//     const [style, setStyle] = useState(
+//         "navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+//     );
+
+//     const changeStyle = () => {
+//         if (
+//             style == "navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+//         ) {
+//             setStyle(
+//                 "navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled"
+//             );
+//         } else {
+//             setStyle("navbar-nav bg-gradient-primary sidebar sidebar-dark accordion");
+//         }
+//     };
+//     const changeStyle1 = () => {
+//         if (
+//             style == "navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+//         ) {
+//             setStyle(
+//                 "navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled1"
+//             );
+//         } else {
+//             setStyle("navbar-nav bg-gradient-primary sidebar sidebar-dark accordion");
+//         }
+//     };
+
+//     const handleMenuItemClick = (menuItem) => {
+//         setActiveMenuItem(menuItem);
+//     };
+
+//     return (
+//         <div>
+//             <div id="page-top">
+//                 {/*  <!-- Page Wrapper --> */}
+//                 <div id="">
+//                     {/*  <!-- Sidebar --> */}
+//                     <ul className={style} id="accordionSidebar">
+//                         {/*  <!-- Sidebar - Brand --> */}
+//                         <a
+//                             className="sidebar-brand d-flex align-items-center justify-content-center"
+//                             href="#"
+//                         >
+//                             <div className="sidebar-brand-icon rotate-n-15"></div>
+//                             <div className="sidebar-brand-text mx-3">Prospect Legal</div>
+//                             <div className="text-center d-none d-md-inline">
+//                                 <button
+//                                     className="rounded-circle border-0"
+//                                     id="sidebarToggle"
+//                                     onClick={changeStyle}
+//                                 ></button>
+//                             </div>
+//                         </a>
+
+//                         {/*   <!-- Divider --> */}
+//                         <hr className="sidebar-divider my-0" />
+
+//                         {/*  <!-- Nav Item - Dashboard --> */}
+
+//                         <li className={`nav-item ${activeMenuItem === "dashboard" ? "active" : ""}`}>
+//                             <Link to="/dashboard" className="nav-link" onClick={() => handleMenuItemClick("dashboard")}>
+//                                 <i className="fas fa-fw fa-tachometer-alt"></i>
+//                                 <span>Dashboard</span>
+//                             </Link>
+//                         </li>
+//                         {/*  <!-- Divider --> */}
+//                         <hr className="sidebar-divider" />
+
+//                         {/*   <!-- Heading --> */}
+//                         <div className="sidebar-heading">Interface</div>
+
+//                         {/*  <!-- Nav Item - Pages Collapse Menu --> */}
+//                         <li className="nav-item">
+//                             <a
+//                                 className="nav-link collapsed"
+//                                 href="#"
+//                                 data-toggle="collapse"
+//                                 data-target="#collapseAssetMaster"
+//                                 aria-expanded="true"
+//                                 aria-controls="collapseAssetMaster"
+
+//                             >
+//                                 <i className="fas fa-fw fa-cog"></i>
+//                                 <span>Asset Master</span>
+//                             </a>
+//                             <div
+//                                 id="collapseAssetMaster"
+//                                 className={`collapse ${activeMenuItem === "assetlist" ? "show" : ""}`}
+//                                 aria-labelledby="headingAssetMaster"
+//                                 data-parent="#accordionSidebar"
+//                             >
+//                                 <div className="bg-white py-2 collapse-inner rounded">
+//                                     <h6 className="collapse-header">Assets</h6>
+//                                     <a className="collapse-item" href="#">
+//                                         Add new Asset
+//                                     </a>
+//                                     <Link className={`collapse-item ${activeMenuItem === "assetlist" ? "active" : ""}`} to="/assetlist" onClick={() => handleMenuItemClick("assetlist")}>
+//                                         Total Asset
+//                                     </Link>
+//                                     <a className="collapse-item" href="#">
+//                                         Transfer Asset
+//                                     </a>
+//                                     <h6 className="collapse-header">Asset on Maintenance:</h6>
+//                                     <Link className={`collapse-item ${activeMenuItem === "assetMaintenance" ? "active" : ""}`}
+//                                         onClick={() => handleMenuItemClick("assetMaintenance")}
+//                                         to="/assetMaintenance">
+//                                         Total Maintenance
+//                                     </Link>
+//                                     <Link className="collapse-item" to="/finishedmaintenance">
+//                                         Finished Maintenance
+//                                     </Link>
+//                                     <Link className="collapse-item" to="/unfinishedmaintenance">
+//                                         UnFinished Maintenance
+//                                     </Link>
+//                                     <h6 className="collapse-header">Asset on Insurance:</h6>
+//                                     <Link className="collapse-item" to="/assetinsurance">
+//                                         Asset Insurance
+//                                     </Link>
+//                                     <h6 className="collapse-header">Asset Lost:</h6>
+//                                     <a className="collapse-item" href="#">
+//                                         Add Asset Lost
+//                                     </a>
+//                                     <Link className="collapse-item" to="/assetlostlist">
+//                                         Asset Lost List
+//                                     </Link>
+//                                     <a className="collapse-item" href="#">
+//                                         Asset Hold
+//                                     </a>
+//                                 </div>
+//                             </div>
+//                         </li>
+
+//                         {/* <!-- Nav Item - Employee --> */}
+//                         <li className="nav-item">
+//                             <a
+//                                 className="nav-link collapsed"
+//                                 href="#"
+//                                 data-toggle="collapse"
+//                                 data-target="#collapseEmployee"
+//                                 aria-expanded="true"
+//                                 aria-controls="collapseEmployee"
+//                             >
+//                                 <i className="fas fa-fw fa-chart-area"></i>
+//                                 <span>Employee</span>
+//                             </a>
+//                             <div
+//                                 id="collapseEmployee"
+//                                 className="collapse"
+//                                 aria-labelledby="headingEmployee"
+//                                 data-parent="#accordionSidebar"
+//                             >
+//                                 <div className="bg-white py-2 collapse-inner rounded">
+//                                     <h6 className="collapse-header">Employees:</h6>
+//                                     <a className="collapse-item" href="#">
+//                                         Add new Employee
+//                                     </a>
+//                                     <Link className="collapse-item" to="/employelist">
+//                                         Total Employee
+//                                     </Link>
+//                                     <a className="collapse-item" href="#">
+//                                         Transfer Employee
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         Employee on Maintainence
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         Employee Insurence
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         Employee Lost
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         Employee Hold
+//                                     </a>
+//                                 </div>
+//                             </div>
+//                         </li>
+//                         {/*  <!-- Nav Item - Site Master --> */}
+//                         <li className="nav-item">
+//                             <a
+//                                 className="nav-link collapsed"
+//                                 href="#"
+//                                 data-toggle="collapse"
+//                                 data-target="#collapseSite"
+//                                 aria-expanded="true"
+//                                 aria-controls="collapseSite"
+//                             >
+//                                 <i className="fas fa-fw fa-table"></i>
+//                                 <span>Site Master</span>
+//                             </a>
+//                             <div
+//                                 id="collapseSite"
+//                                 className="collapse"
+//                                 aria-labelledby="headingSite"
+//                                 data-parent="#accordionSidebar"
+//                             >
+//                                 <div className="bg-white py-2 collapse-inner rounded">
+//                                     <h6 className="collapse-header">Sites:</h6>
+//                                     <a className="collapse-item">Add new Site</a>
+//                                     <Link className="collapse-item" to="/sitelist">
+//                                         Total Sites
+//                                     </Link>
+//                                     <a className="collapse-item" href="#">
+//                                         Update Site Details
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         Delete Site
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         Site Status
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         Site Reports
+//                                     </a>
+//                                 </div>
+//                             </div>
+//                         </li>
+//                         {/* <!-- Nav Item - Client Master --> */}
+//                         <li className="nav-item">
+//                             <a
+//                                 className="nav-link collapsed"
+//                                 href="#"
+//                                 data-toggle="collapse"
+//                                 data-target="#collapseClient"
+//                                 aria-expanded="true"
+//                                 aria-controls="collapseClient"
+//                             >
+//                                 <i className="fas fa-fw fa-users"></i>
+//                                 <span>Client Master</span>
+//                             </a>
+//                             <div
+//                                 id="collapseClient"
+//                                 className="collapse"
+//                                 aria-labelledby="headingClient"
+//                                 data-parent="#accordionSidebar"
+//                             >
+//                                 <div className="bg-white py-2 collapse-inner rounded">
+//                                     <h6 className="collapse-header">Clients:</h6>
+//                                     <a className="collapse-item">Add new Client</a>
+//                                     <Link className="collapse-item" to="/clientlist">
+//                                         Total Clients
+//                                     </Link>
+//                                     <a className="collapse-item" href="#">
+//                                         Update Client Details
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         Delete Client
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         Client Status
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         Client Reports
+//                                     </a>
+//                                 </div>
+//                             </div>
+//                         </li>
+//                         {/* Nav Item - vendor Master */}
+//                         <li className="nav-item">
+//                             <a
+//                                 className="nav-link collapsed"
+//                                 href="#"
+//                                 data-toggle="collapse"
+//                                 data-target="#collapsevendor"
+//                                 aria-expanded="true"
+//                                 aria-controls="collapsevendor"
+//                             >
+//                                 <i className="fas fa-fw fa-chart-area"></i>
+//                                 <span>vendor master</span>
+//                             </a>
+//                             <div
+//                                 id="collapsevendor"
+//                                 className="collapse"
+//                                 aria-labelledby="headingvendor"
+//                                 data-parent="#accordionSidebar"
+//                             >
+//                                 <div className="bg-white py-2 collapse-inner rounded">
+//                                     <h6 className="collapse-header">vendors:</h6>
+//                                     <a className="collapse-item" href="#">
+//                                         Add new vendor
+//                                     </a>
+//                                     <Link className="collapse-item" to="/vendorlist">
+//                                         Total vendor
+//                                     </Link>
+//                                     <a className="collapse-item" href="#">
+//                                         Transfer vendor
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         vendor on Maintainence
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         vendor Insurence
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         vendor Lost
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         vendor Hold
+//                                     </a>
+//                                 </div>
+//                             </div>
+//                         </li>
+//                         {/* Nav Item - Category Master */}
+//                         <li className="nav-item">
+//                             <a
+//                                 className="nav-link collapsed"
+//                                 href="#"
+//                                 data-toggle="collapse"
+//                                 data-target="#collapsecategory"
+//                                 aria-expanded="true"
+//                                 aria-controls="collapsecategory"
+//                             >
+//                                 <i className="fas fa-fw fa-chart-area"></i>
+//                                 <span>Category master</span>
+//                             </a>
+//                             <div
+//                                 id="collapsecategory"
+//                                 className="collapse"
+//                                 aria-labelledby="headingcategory"
+//                                 data-parent="#accordionSidebar"
+//                             >
+//                                 <div className="bg-white py-2 collapse-inner rounded">
+//                                     <h6 className="collapse-header">Category:</h6>
+//                                     <a className="collapse-item" href="#">
+//                                         Add new category
+//                                         <span
+//                                             style={{
+//                                                 width: "5px",
+//                                                 height: "5px",
+//                                                 borderRadius: "50%",
+//                                                 backgroundColor: "green",
+//                                             }}
+//                                         >
+//                                             ` `
+//                                         </span>
+//                                     </a>
+//                                     <Link className="collapse-item" to="/categorylist">
+//                                         Total Category{" "}
+//                                         <span
+//                                             style={{
+//                                                 width: "5px",
+//                                                 height: "5px",
+//                                                 borderRadius: "50%",
+//                                                 backgroundColor: "green",
+//                                             }}
+//                                         >
+//                                             ` `
+//                                         </span>
+//                                     </Link>
+//                                     <a className="collapse-item" href="#">
+//                                         Transfer category
+//                                         <span
+//                                             style={{
+//                                                 width: "5px",
+//                                                 height: "5px",
+//                                                 borderRadius: "50%",
+//                                                 backgroundColor: "red",
+//                                             }}
+//                                         >
+//                                             ` `
+//                                         </span>
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         category on Maintainence
+//                                         <span
+//                                             style={{
+//                                                 width: "5px",
+//                                                 height: "5px",
+//                                                 borderRadius: "50%",
+//                                                 backgroundColor: "red",
+//                                             }}
+//                                         >
+//                                             ` `
+//                                         </span>
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         category Insurence
+//                                         <span
+//                                             style={{
+//                                                 width: "5px",
+//                                                 height: "5px",
+//                                                 borderRadius: "50%",
+//                                                 backgroundColor: "red",
+//                                             }}
+//                                         >
+//                                             ` `
+//                                         </span>
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         category Lost
+//                                         <span
+//                                             style={{
+//                                                 width: "5px",
+//                                                 height: "5px",
+//                                                 borderRadius: "50%",
+//                                                 backgroundColor: "red",
+//                                             }}
+//                                         >
+//                                             ` `
+//                                         </span>
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         category Hold
+//                                         <span
+//                                             style={{
+//                                                 width: "5px",
+//                                                 height: "5px",
+//                                                 borderRadius: "50%",
+//                                                 backgroundColor: "red",
+//                                             }}
+//                                         >
+//                                             ` `
+//                                         </span>
+//                                     </a>
+//                                 </div>
+//                             </div>
+//                         </li>
+//                         {/* Nav Item - Total Component */}
+//                         <li className="nav-item">
+//                             <a
+//                                 className="nav-link collapsed"
+//                                 href="#"
+//                                 data-toggle="collapse"
+//                                 data-target="#collapsecomponent"
+//                                 aria-expanded="true"
+//                                 aria-controls="collapsecomponent"
+//                             >
+//                                 <i className="fas fa-fw fa-chart-area"></i>
+//                                 <span>Component master</span>
+//                             </a>
+//                             <div
+//                                 id="collapsecomponent"
+//                                 className="collapse"
+//                                 aria-labelledby="headingcategory"
+//                                 data-parent="#accordionSidebar"
+//                             >
+//                                 <div className="bg-white py-2 collapse-inner rounded">
+//                                     <h6 className="collapse-header">Component:</h6>
+//                                     <Link className="collapse-item" to="/componentlist">
+//                                         Total head component
+//                                         <span
+//                                             style={{
+//                                                 width: "5px",
+//                                                 height: "5px",
+//                                                 borderRadius: "50%",
+//                                                 backgroundColor: "green",
+//                                             }}
+//                                         >
+//                                             ` `
+//                                         </span>
+//                                     </Link>
+//                                     <Link className="collapse-item" to="/fullcomponentlist">
+//                                         Total Component
+//                                         <span
+//                                             style={{
+//                                                 width: "5px",
+//                                                 height: "5px",
+//                                                 borderRadius: "50%",
+//                                                 backgroundColor: "green",
+//                                             }}
+//                                         >
+//                                             ` `
+//                                         </span>
+//                                     </Link>
+//                                     <a className="collapse-item" href="#">
+//                                         Transfer category
+//                                         <span
+//                                             style={{
+//                                                 width: "5px",
+//                                                 height: "5px",
+//                                                 borderRadius: "50%",
+//                                                 backgroundColor: "red",
+//                                             }}
+//                                         >
+//                                             ` `
+//                                         </span>
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         category on Maintainence
+//                                         <span
+//                                             style={{
+//                                                 width: "5px",
+//                                                 height: "5px",
+//                                                 borderRadius: "50%",
+//                                                 backgroundColor: "red",
+//                                             }}
+//                                         >
+//                                             ` `
+//                                         </span>
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         category Insurence
+//                                         <span
+//                                             style={{
+//                                                 width: "5px",
+//                                                 height: "5px",
+//                                                 borderRadius: "50%",
+//                                                 backgroundColor: "red",
+//                                             }}
+//                                         >
+//                                             ` `
+//                                         </span>
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         category Lost
+//                                         <span
+//                                             style={{
+//                                                 width: "5px",
+//                                                 height: "5px",
+//                                                 borderRadius: "50%",
+//                                                 backgroundColor: "red",
+//                                             }}
+//                                         >
+//                                             ` `
+//                                         </span>
+//                                     </a>
+//                                     <a className="collapse-item" href="#">
+//                                         category Hold
+//                                         <span
+//                                             style={{
+//                                                 width: "5px",
+//                                                 height: "5px",
+//                                                 borderRadius: "50%",
+//                                                 backgroundColor: "red",
+//                                             }}
+//                                         >
+//                                             ` `
+//                                         </span>
+//                                     </a>
+//                                 </div>
+//                             </div>
+//                         </li>
+
+//                         {/* <!-- Divider --> */}
+//                         <hr className="sidebar-divider d-none d-md-block" />
+//                     </ul>
+
+//                     <div id="content-wrapper" className="d-flex flex-column">
+//                         {/*  <!-- Main Content --> */}
+//                         <div id="content">
+//                             <div id="content-wrapper" className="d-flex flex-column">
+//                                 {/*  <!-- Topbar --> */}
+//                                 <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+//                                     {/*  <!-- Sidebar Toggle (Topbar) --> */}
+//                                     <button
+//                                         id="sidebarToggleTop"
+//                                         className="btn btn-link d-md-none rounded-circle mr-3"
+//                                         onClick={changeStyle1}
+//                                     >
+//                                         <i className="fa fa-bars"></i>
+//                                     </button>
+
+//                                     {/*  <!-- Topbar Search --> */}
+//                                     <form className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+//                                         <div className="input-group">
+//                                             <input
+//                                                 type="text"
+//                                                 className="form-control bg-light border-0 small"
+//                                                 placeholder="Search for..."
+//                                                 aria-label="Search"
+//                                                 aria-describedby="basic-addon2"
+//                                             />
+//                                             <div className="input-group-append">
+//                                                 <button className="btn btn-primary" type="button">
+//                                                     <i className="fas fa-search fa-sm"></i>
+//                                                 </button>
+//                                             </div>
+//                                         </div>
+//                                     </form>
+
+//                                     {/*  <!-- Topbar Navbar --> */}
+//                                     <ul className="navbar-nav ml-auto">
+//                                         {/*  <!-- Nav Item - Search Dropdown (Visible Only XS) --> */}
+//                                         <li className="nav-item dropdown no-arrow d-sm-none">
+//                                             <a
+//                                                 className="nav-link dropdown-toggle"
+//                                                 href="#"
+//                                                 id="searchDropdown"
+//                                                 role="button"
+//                                                 data-toggle="dropdown"
+//                                                 aria-haspopup="true"
+//                                                 aria-expanded="false"
+//                                             >
+//                                                 <i className="fas fa-search fa-fw"></i>
+//                                             </a>
+//                                             {/*   <!-- Dropdown - Messages --> */}
+//                                             <div
+//                                                 className="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+//                                                 aria-labelledby="searchDropdown"
+//                                             >
+//                                                 <form className="form-inline mr-auto w-100 navbar-search">
+//                                                     <div className="input-group">
+//                                                         <input
+//                                                             type="text"
+//                                                             className="form-control bg-light border-0 small"
+//                                                             placeholder="Search for..."
+//                                                             aria-label="Search"
+//                                                             aria-describedby="basic-addon2"
+//                                                         />
+//                                                         <div className="input-group-append">
+//                                                             <button className="btn btn-primary" type="button">
+//                                                                 <i className="fas fa-search fa-sm"></i>
+//                                                             </button>
+//                                                         </div>
+//                                                     </div>
+//                                                 </form>
+//                                             </div>
+//                                         </li>
+
+//                                         <div className="topbar-divider d-none d-sm-block"></div>
+
+//                                         {/* <!-- Nav Item - User Information --> */}
+//                                         <li className="nav-item dropdown no-arrow">
+//                                             <a
+//                                                 className="nav-link dropdown-toggle"
+//                                                 href="#"
+//                                                 id="userDropdown"
+//                                                 role="button"
+//                                                 data-toggle="dropdown"
+//                                                 aria-haspopup="true"
+//                                                 aria-expanded="false"
+//                                             >
+//                                                 <span className="mr-2 d-none d-lg-inline text-gray-600 small">
+//                                                     Douglas McGee
+//                                                 </span>
+//                                                 <img
+//                                                     className="img-profile rounded-circle"
+//                                                     src="img/undraw_profile.svg"
+//                                                 />
+//                                             </a>
+
+//                                             {/*  <!-- Dropdown - User Information --> */}
+//                                             <div
+//                                                 className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+//                                                 aria-labelledby="userDropdown"
+//                                             >
+//                                                 <Link
+//                                                     to="/userdashboard/profile"
+//                                                     id="userDropdown"
+//                                                     role="button"
+//                                                     data-toggle="dropdown"
+//                                                     aria-haspopup="true"
+//                                                     aria-expanded="false"
+//                                                 >
+//                                                     <a className="dropdown-item" href="#">
+//                                                         <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+//                                                         Profile
+//                                                     </a>
+//                                                 </Link>
+//                                                 <a className="dropdown-item" href="#">
+//                                                     <i className="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+//                                                     Settings
+//                                                 </a>
+//                                                 <a className="dropdown-item" href="#">
+//                                                     <i className="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+//                                                     Activity Log
+//                                                 </a>
+//                                                 <div className="dropdown-divider"></div>
+//                                                 <a
+//                                                     className="dropdown-item"
+//                                                     data-toggle="modal"
+//                                                     data-target="#logoutModal"
+//                                                 >
+//                                                     <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+//                                                     Logout
+//                                                 </a>
+//                                             </div>
+//                                         </li>
+//                                     </ul>
+//                                 </nav>
+
+//                                 {/*  <!-- End of Topbar --> */}
+//                                 <div id="content">
+//                                     {activeMenuItem === "dashboard" && <Dashboard />}
+//                                     {activeMenuItem === "assetMaintenance" && <AssetMaintenance />}
+
+//                                     {/* <Dashboard /> */}
+//                                     {activeMenuItem === "Dashboard" && <Dashboard />}
+//                                     {activeMenuItem === "assetlist" && <Assetlist />}
+//                                 </div>
+//                             </div>
+//                         </div>
+//                     </div>
+
+//                     {/*  <!-- Logout Modal--> */}
+//                     <div
+//                         className="modal fade"
+//                         id="logoutModal"
+//                         tabindex="-1"
+//                         role="dialog"
+//                         aria-labelledby="exampleModalLabel"
+//                         aria-hidden="true"
+//                     >
+//                         <div className="modal-dialog" role="document">
+//                             <div className="modal-content">
+//                                 <div className="modal-header">
+//                                     <h5 className="modal-title" id="exampleModalLabel">
+//                                         Ready to Leave?
+//                                     </h5>
+//                                     <button
+//                                         className="close"
+//                                         type="button"
+//                                         data-dismiss="modal"
+//                                         aria-label="Close"
+//                                     >
+//                                         <span aria-hidden="true">×</span>
+//                                     </button>
+//                                 </div>
+//                                 <div className="modal-body">Are you Sure you want Logout?</div>
+//                                 <div className="modal-footer">
+//                                     <button
+//                                         className="btn btn-secondary"
+//                                         type="button"
+//                                         data-dismiss="modal"
+//                                     >
+//                                         Cancel
+//                                     </button>
+//                                     <button className="btn btn-primary" onClick={handleLogout}>
+//                                         Logout
+//                                     </button>
+//                                 </div>
+//                             </div>
+//                         </div>
+//                     </div>
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// }
+
+// export default Sidebar;

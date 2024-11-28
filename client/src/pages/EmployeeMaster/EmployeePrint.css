@@ -1,0 +1,15 @@
+/* Add this CSS in your stylesheet or in a style tag in your component */
+@media print {
+    .print-container {
+      position: static !important;
+      transform: none !important;
+      width: auto !important;
+      height: auto !important;
+      background: white !important;
+      z-index: auto !important;
+    }
+    .siddd{
+        display: none;
+    }
+  }
+  

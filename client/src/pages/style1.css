@@ -1,0 +1,9 @@
+#hovering{
+    padding: 5px 10px;
+    border-radius: 30px;
+    background-color: #4E73DF;
+    color: white;
+}
+#hovering:hover{
+    background-color: rgb(255, 66, 66);
+}

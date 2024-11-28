@@ -1,0 +1,25 @@
+# Ignore compiled files
+*.o
+*.out
+
+# Ignore logs
+logs/
+
+# Ignore temporary files
+temp/
+
+# Ignore IDE or editor files
+.vscode/
+.idea/
+
+# Ignore node_modules directory
+node_modules/
+
+# Ignore configuration files with sensitive information
+config.ini
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore swap files created by Vim
+.swp
