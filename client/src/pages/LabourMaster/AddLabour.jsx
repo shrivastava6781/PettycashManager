@@ -29,7 +29,6 @@ const AddLabour = ({ onClose, onUpdate }) => {
                     axios.get(`${process.env.REACT_APP_LOCAL_URL}/projects`),
                     axios.get(`${process.env.REACT_APP_LOCAL_URL}/labours/lastId`),
                 ]);
-
                 setProjects(projectsResponse.data);
                 const lastId = labourResponse.data.lastId || 0;
                 setLastLabourId(lastId);

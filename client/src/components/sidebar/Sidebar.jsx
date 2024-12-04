@@ -17,6 +17,7 @@ import AddPaymentMode from "../../pages/PaymentModeMaster/AddPaymentMode";
 import AddHead from "../../pages/HeadMaster/AddHead";
 import AdminMakeEntry from "../../pages/AdminEntry/AdminMakeEntry";
 import AddLabour from "../../pages/LabourMaster/AddLabour";
+import PayLabourAmt from "../../pages/LabourMaster/PayLabourAmt";
 
 function Sidebar() {
 
@@ -47,6 +48,8 @@ function Sidebar() {
   const [isAddLabourModalopen, setIsAddLabourModalopen] = useState(false);
   // Admin Make Entry modal 
   const [isAdminMakeEntryModalopen, setIsAdminMakeEntryModalopen] = useState(false);
+  // Pay Amount modal 
+  const [isPayLabourAmtModalopen, setIsPayLabourAmtModalopen] = useState(false);
 
 
   // Add Cash
@@ -233,6 +236,15 @@ function Sidebar() {
 
   const handleCloseAdminMakeEntryModal = () => {
     setIsAdminMakeEntryModalopen(false);
+  };
+
+  // Add Labour Amt
+  const handleAddLabourAmtModal = () => {
+    setIsPayLabourAmtModalopen(true);
+  };
+
+  const handleCloseAddLabourAmtModal = () => {
+    setIsPayLabourAmtModalopen(false);
   };
 
   const handleListClick = (path) => {
@@ -474,13 +486,19 @@ function Sidebar() {
                 <div className="bg-white py-2 collapse-inner rounded">
                   <h6 className="collapse-header">Labour Master:</h6>
                   <a className="collapse-item" href="#" onClick={handleAddLabour}>Add Labour</a>
+                  <a className="collapse-item" href="#" onClick={handleAddLabourAmtModal}>Labour Payment</a>
+                  <Link to="/labourpaymentlist" className="collapse-item" onClick={() => handleListClick("/labourpaymentlist")}>
+                    <span>Labour Payment List</span>
+                  </Link>
                   <Link to="/labourlist" className="collapse-item" onClick={() => handleListClick("/labourlist")}>
                     <span>Labour List</span>
                   </Link>
-                  <Link to="/labourattendnance" className="collapse-item" onClick={() => handleListClick("/labourattendnance")}>
-                    <span>Add Attendance</span>
+                  <Link to="/labourattendance" className="collapse-item" onClick={() => handleListClick("/labourattendance")}>
+                    <span>Add Labour Attendance</span>
                   </Link>
-                  
+                  {/* <Link to="/viewattendance" className="collapse-item" onClick={() => handleListClick("/viewattendance")}>
+                    <span>View Attendance</span>
+                  </Link> */}
                 </div>
               </div>
             </li>
@@ -570,6 +588,7 @@ function Sidebar() {
       {isAddPositionModalOpen && <AddPositionModal onClose={handleClosePositionModal} onUpdate={handleUpdate} />}
       {isAddProjectModalOpen && <AddProjectModal onClose={handleCloseProjectModal} onUpdate={handleUpdate} />}
       {isAdminMakeEntryModalopen && <AdminMakeEntry onClose={handleCloseAdminMakeEntryModal} onUpdate={handleUpdate} />}
+      {isPayLabourAmtModalopen && <PayLabourAmt onClose={handleCloseAddLabourAmtModal} onUpdate={handleUpdate} />}
 
     </div>
   )

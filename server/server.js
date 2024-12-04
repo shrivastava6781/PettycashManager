@@ -1179,19 +1179,19 @@ app.post('/empdata', employeeUpload.single('picture'), (req, res) => {
 });
 
 
-app.post('/projectData',projectUpload.single('picture'), (req, res) => {
+app.post('/projectData', projectUpload.single('picture'), (req, res) => {
   let picturePath = null; // Initialize picturePath as null
-  const { projectName,projectShortName,
-      projectCode,
-      companyName,
-      company_id,
-      employeerName,
-      projectType,
-      projectAddress,
-      projectstate,
-      projectcity,
-      projectpincode,
-      username} = req.body;
+  const { projectName, projectShortName,
+    projectCode,
+    companyName,
+    company_id,
+    employeerName,
+    projectType,
+    projectAddress,
+    projectstate,
+    projectcity,
+    projectpincode,
+    username } = req.body;
 
   if (req.file) {
     picturePath = req.file.filename; // Assign the filename if the file was uploaded
@@ -1205,9 +1205,9 @@ app.post('/projectData',projectUpload.single('picture'), (req, res) => {
     projectstate, projectcity, projectpincode, username, picture
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?)`;
 
-  const values = [ projectName,projectShortName, projectCode, companyName,
-      company_id, employeerName, projectType, projectAddress,
-      projectstate, projectcity, projectpincode, username, picturePath];
+  const values = [projectName, projectShortName, projectCode, companyName,
+    company_id, employeerName, projectType, projectAddress,
+    projectstate, projectcity, projectpincode, username, picturePath];
 
   db.query(sql, values, (err, result) => {
     if (err) {
@@ -1331,7 +1331,7 @@ app.get('/api/supervisor/:projectId', (req, res) => {
 app.post('/makeEntry', makeEntryUpload.single('picture'), (req, res) => {
   let picturePath = null; // Initialize picturePath as null
   console.log(req.body);
-  const { date, headId, description, amount, headName, projectId, projectName,projectShortName, supervisorId, supervisorName } = req.body;
+  const { date, headId, description, amount, headName, projectId, projectName, projectShortName, supervisorId, supervisorName } = req.body;
 
   if (req.file) {
     picturePath = req.file.filename; // Assign the filename if the file was uploaded
@@ -1342,7 +1342,7 @@ app.post('/makeEntry', makeEntryUpload.single('picture'), (req, res) => {
     INSERT INTO makeentry (date, headId, description, amount, picture, headName, projectId, projectName,projectShortName, supervisorId, supervisorName)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-  const values = [date, headId, description, amount, picturePath, headName, projectId, projectName,projectShortName, supervisorId, supervisorName];
+  const values = [date, headId, description, amount, picturePath, headName, projectId, projectName, projectShortName, supervisorId, supervisorName];
 
   db.query(sql, values, (err, result) => {
     if (err) {
@@ -1494,7 +1494,7 @@ app.get('/api/transactions/:projectId', (req, res) => {
 
 // supervisor 
 app.post('/assignSupervisor', (req, res) => {
-  const { appointmentDate, departmentName, designationId, designationName, employeeCode, employeeEmail, employeeName, employeePanAddhar, employeePhone, employeePicture, employeerName, fatherName, projectAddress, projectCode, projectId, projectName,projectShortName, projectPicture, projectType, projectcity, projectpincode, projectstate, supervisorId, username
+  const { appointmentDate, departmentName, designationId, designationName, employeeCode, employeeEmail, employeeName, employeePanAddhar, employeePhone, employeePicture, employeerName, fatherName, projectAddress, projectCode, projectId, projectName, projectShortName, projectPicture, projectType, projectcity, projectpincode, projectstate, supervisorId, username
   } = req.body;
   // SQL query to insert data into supervisor table
   const sql = `
@@ -1503,7 +1503,7 @@ app.post('/assignSupervisor', (req, res) => {
   // Execute the query
   db.query(
     sql,
-    [appointmentDate, departmentName, designationId, designationName, employeeCode, employeeEmail, employeeName, employeePanAddhar, employeePhone, employeePicture, employeerName, fatherName, projectAddress, projectCode, projectId, projectName,projectShortName, projectPicture, projectType, projectcity, projectpincode, projectstate, supervisorId, username],
+    [appointmentDate, departmentName, designationId, designationName, employeeCode, employeeEmail, employeeName, employeePanAddhar, employeePhone, employeePicture, employeerName, fatherName, projectAddress, projectCode, projectId, projectName, projectShortName, projectPicture, projectType, projectcity, projectpincode, projectstate, supervisorId, username],
     (err, result) => {
       if (err) {
         console.error('Error uploading supervisor data:', err);
@@ -1728,7 +1728,7 @@ app.get('/totalexpenses', (req, res) => {
 
 app.put('/changeentries/:id', makeEntryUpload.single('picture'), (req, res) => {
   const id = req.params.id;
-  const { date, headId, description, amount, headName, projectId, projectName,projectShortName, supervisorId, supervisorName } = req.body;
+  const { date, headId, description, amount, headName, projectId, projectName, projectShortName, supervisorId, supervisorName } = req.body;
 
   // Log request body for debugging
   console.log("data", req.body);
@@ -2312,17 +2312,17 @@ app.get('/projectcreditdebit/:projectId', (req, res) => {
   `;
 
   db.query(query, [projectId, projectId], (err, results) => {
-      if (err) {
-          console.error('Error fetching credit/debit records:', err);
-          res.status(500).json({ error: 'Error fetching credit/debit records' });
-          return;
-      }
-      res.json(results);
+    if (err) {
+      console.error('Error fetching credit/debit records:', err);
+      res.status(500).json({ error: 'Error fetching credit/debit records' });
+      return;
+    }
+    res.json(results);
   });
 });
 
 // Labour Add  
-app.get('/s/lastId', (req, res) => {
+app.get('/labours/lastId', (req, res) => {
   const sql = 'SELECT MAX(id) AS id FROM labour';
   db.query(sql, (err, results) => {
     if (err) {
@@ -2335,10 +2335,10 @@ app.get('/s/lastId', (req, res) => {
 });
 
 app.post('/addLabour', (req, res) => {
-  const { projectId,projectName,projectShortName,labourId,labourName,fatherName,mobileNo,gender,dayShift,nightShift,overtimeHrs,username} = req.body;
+  const { projectId, projectName, projectShortName, labourId, labourName, fatherName, mobileNo, gender, dayShift, nightShift, overtimeHrs, username } = req.body;
 
   const sql = 'INSERT INTO labour (projectId,projectName,projectShortName,labourId,labourName,fatherName,mobileNo,gender,dayShift,nightShift,overtimeHrs,username) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-  const values = [projectId,projectName,projectShortName,labourId,labourName,fatherName,mobileNo,gender,dayShift,nightShift,overtimeHrs,username];
+  const values = [projectId, projectName, projectShortName, labourId, labourName, fatherName, mobileNo, gender, dayShift, nightShift, overtimeHrs, username];
 
   db.query(sql, values, (err, result) => {
     if (err) {
@@ -2378,11 +2378,11 @@ app.delete('/deletelabour/:id', (req, res) => {
 app.put('/editLabour/:id', (req, res) => {
   const Id = parseInt(req.params.id);
 
-  const { projectId,projectName,projectShortName,labourId,labourName,fatherName,mobileNo,gender,dayShift,nightShift,overtimeHrs } = req.body;
+  const { projectId, projectName, projectShortName, labourId, labourName, fatherName, mobileNo, gender, dayShift, nightShift, overtimeHrs } = req.body;
 
   const sql = 'UPDATE labour SET projectId = ? ,projectName = ? ,projectShortName = ? ,labourId = ? ,labourName = ? ,fatherName = ? ,mobileNo = ? ,gender = ? ,dayShift = ? ,nightShift = ? ,overtimeHrs = ? WHERE id=?';
 
-  db.query(sql, [projectId,projectName,projectShortName,labourId,labourName,fatherName,mobileNo,gender,dayShift,nightShift,overtimeHrs, Id], (err, result) => {
+  db.query(sql, [projectId, projectName, projectShortName, labourId, labourName, fatherName, mobileNo, gender, dayShift, nightShift, overtimeHrs, Id], (err, result) => {
     if (err) {
       console.error('Error updating Labour data:', err);
       return res.status(500).send(err);
@@ -2409,10 +2409,433 @@ app.get('/labours/:projectId', (req, res) => {
   });
 });
 
+
+
+// Endpoint to handle attendance record creation or update
+app.post('/attendance', (req, res) => {
+  const { projectId, date, attendance } = req.body;
+
+  console.log(projectId, date, attendance);
+
+  if (!projectId || !date || !attendance || !Array.isArray(attendance)) {
+    return res.status(400).send('Invalid input. Ensure projectId, date, and attendance data are provided.');
+  }
+
+  try {
+    // Iterate through the attendance array to handle each labour's record
+    attendance.forEach((record) => {
+      const { labourId, dayShift, nightShift, overtime } = record;
+
+      if (!labourId) {
+        console.error('Labour ID is missing in attendance record.');
+        return res.status(400).send('Labour ID is required for each attendance record.');
+      }
+
+      // Check if an attendance record exists for the given labourId and date
+      const checkExistingQuery = 'SELECT * FROM labour_attendance WHERE labourId = ? AND date = ?';
+      db.query(checkExistingQuery, [labourId, date], (error, results) => {
+        if (error) {
+          console.error('Error checking existing attendance record:', error);
+          return res.status(500).send('Error checking existing attendance record');
+        }
+
+        if (results.length > 0) {
+          // If record exists, update it
+          const updateQuery = `
+            UPDATE labour_attendance 
+            SET day_shift = ?, night_shift = ?, overtime_hours = ? 
+            WHERE labourId = ? AND date = ?
+          `;
+          db.query(updateQuery, [dayShift, nightShift, overtime, labourId, date], (updateError, updateResults) => {
+            if (updateError) {
+              console.error('Error updating attendance record:', updateError);
+              return res.status(500).send('Error updating attendance record');
+            }
+            console.log(`Attendance updated for labour ID ${labourId} on ${date}`);
+          });
+        } else {
+          // If record doesn't exist, insert a new record
+          const insertQuery = `
+            INSERT INTO labour_attendance (labourId, projectId, date, day_shift, night_shift, overtime_hours) 
+            VALUES (?, ?, ?, ?, ?, ?)
+          `;
+          db.query(insertQuery, [labourId, projectId, date, dayShift, nightShift, overtime], (insertError, insertResults) => {
+            if (insertError) {
+              console.error('Error inserting new attendance record:', insertError);
+              return res.status(500).send('Error inserting new attendance record');
+            }
+            console.log(`Attendance created for labour ID ${labourId} on ${date}`);
+          });
+        }
+      });
+    });
+
+    res.status(201).send('Attendance processed successfully for all labours.');
+  } catch (error) {
+    console.error('Error saving attendance:', error);
+    res.status(500).send('Failed to save attendance records');
+  }
+});
+app.get('/api/attendance/:labourId', (req, res) => {
+  const { labourId } = req.params;
+  const { date } = req.query;
+
+  const query = `SELECT * FROM labour_attendance WHERE labourId = ? AND date = ? ORDER BY date DESC`;
+  db.query(query, [labourId, date], (err, results) => {
+    if (err) {
+      console.error('Error fetching labour_attendance records:', err);
+      res.status(500).json({ error: 'Error fetching labour_attendance records' });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+// Express.js route
+
+app.get("/attendance", (req, res) => {
+  const { projectId, date } = req.query;
+
+  if (!projectId || !date) {
+    return res.status(400).json({ error: "Project ID and date are required." });
+  }
+
+  const query = `
+      SELECT 
+          la.labourId,
+          l.labourName,
+          la.day_shift,
+          la.night_shift,
+          la.overtime_hours
+      FROM 
+          labour_attendance la
+      JOIN 
+          labour l ON la.labourId = l.id
+      WHERE 
+          la.projectId = ? AND la.date = ?
+  `;
+
+  db.query(query, [projectId, date], (err, results) => {
+    if (err) {
+      console.error("Error fetching attendance:", err.message);
+      return res.status(500).json({ error: "Failed to fetch attendance data." });
+    }
+    res.status(200).json(results);
+  });
+});
+
+
+app.get('/viewattendance', async (req, res) => {
+  const { projectId, month, year } = req.query;
+
+  if (!projectId || !month || !year) {
+    return res.status(400).json({ message: "Project ID, month, and year are required." });
+  }
+
+  try {
+    // Ensure `month` is a number and zero-indexed for JavaScript Date.
+    const parsedMonth = parseInt(month) - 1; // Adjust to zero-based index
+    const parsedYear = parseInt(year);
+
+    // Validate parsed inputs
+    if (isNaN(parsedMonth) || isNaN(parsedYear) || parsedMonth < 0 || parsedMonth > 11) {
+      return res.status(400).json({ message: "Invalid month or year format." });
+    }
+
+    const startDate = new Date(parsedYear, parsedMonth, 1);
+    const endDate = new Date(parsedYear, parsedMonth + 1, 0); // Last day of the month
+
+    const query = `
+      SELECT 
+        a.labourId,
+        a.date,
+        a.day_shift,
+        a.night_shift,
+        a.overtime_hours,
+        l.labourName
+      FROM attendance a
+      INNER JOIN labours l ON a.labourId = l.id
+      WHERE a.projectId = ? AND a.date BETWEEN ? AND ?
+    `;
+
+    // Execute the query
+    const [rows] = await db.query(query, [projectId, startDate, endDate]);
+
+    // Format the data
+    const formattedData = rows.map(row => ({
+      labourId: row.labourId,
+      labourName: row.labourName,
+      date: row.date,
+      dayShift: !!row.day_shift,
+      nightShift: !!row.night_shift,
+      overtimeHours: row.overtime_hours || 0
+    }));
+
+    res.json(formattedData);
+  } catch (error) {
+    console.error("Error fetching attendance:", error.message);
+    res.status(500).json({ message: "Failed to fetch attendance data." });
+  }
+});
+
+
+// Middleware for parsing requests
+app.get('/totalattendance', async (req, res) => {
+  const { labourId, month } = req.query;
+  // Validate inputs
+  if (!labourId || !month) {
+    return res.status(400).json({ error: 'labourId and month are required.' });
+  }
+  try {
+    const query = `
+          SELECT 
+              id, labourId, projectId, date, day_shift, night_shift, overtime_hours, created_at, updated_at
+          FROM 
+              labour_attendance
+          WHERE 
+              labourId = ? AND DATE_FORMAT(date, '%Y-%m') = ?;
+      `;
+    db.query(query, [labourId, month], (err, results) => {
+      if (err) {
+        console.error('Error executing query:', err);
+        return res.status(500).json({ error: 'Database query failed.' });
+      }
+
+      res.status(200).json(results);
+    });
+  } catch (error) {
+    console.error('Error fetching attendance:', error);
+    res.status(500).json({ error: 'An unexpected error occurred.' });
+  }
+});
+
+// Labour Payment 
+// Labour Payment 
+app.post('/payLabour', (req, res) => {
+  const {
+    labourId,
+    month,
+    paymentAmount,
+    paymentdate,
+    projectId,
+    totalAmount,
+    labourName,
+    username
+  } = req.body; // Ensure the data is being sent in the request body
+
+  // SQL query to insert labour payment details
+  const sql = `
+    INSERT INTO labour_payment (
+      labourId,
+      month,
+      paymentAmount,
+      paymentDate,
+      projectId,
+      totalAmount,
+      labourName,
+      username
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  // Values to be inserted into the table
+  const values = [
+    labourId,
+    month,
+    paymentAmount,
+    paymentdate,
+    projectId,
+    totalAmount,
+    labourName,
+    username
+  ];
+
+  // Execute the query
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Error uploading Labour data:', err);
+      return res.status(500).send('Error uploading Labour data');
+    }
+    console.log('Labour data uploaded:', result);
+    res.send('Labour data uploaded successfully');
+  });
+});
+
+
+app.get('/labourpayment', async (req, res) => {
+  const { labourId, month } = req.query;
+
+  // Validate inputs
+  if (!labourId || !month) {
+    return res.status(400).json({ error: 'labourId and month are required.' });
+  }
+
+  try {
+    const query = `
+      SELECT 
+          id, labourId, month, paymentAmount, paymentDate, projectId, 
+          totalAmount, username, createdAt, updatedAt
+      FROM 
+           labour_payment
+      WHERE 
+          labourId = ? AND month = ?;
+    `;
+
+    db.query(query, [labourId, month], (err, results) => {
+      if (err) {
+        console.error('Error executing query:', err);
+        return res.status(500).json({ error: 'Database query failed.' });
+      }
+
+      res.status(200).json(results);
+    });
+  } catch (error) {
+    console.error('Error fetching labour payment:', error);
+    res.status(500).json({ error: 'An unexpected error occurred.' });
+  }
+});
+
+
+// LabourPaymentList 
+// user 
+app.get('/labourpaymentlist/project/:projectId', (req, res) => {
+  const { projectId } = req.params;
+
+  // Adjust the query to match projectId in the labourpaymentlist table
+  const query = 'SELECT * FROM labour_payment WHERE projectId = ?';
+
+  db.query(query, [projectId], (err, results) => {
+    if (err) {
+      console.error('Error fetching labour_payment records:', err);
+      res.status(500).json({ error: 'Error fetching labour_payment records' });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+app.get('/labourpaymentlist/labour/:labourId', (req, res) => {
+  const { labourId } = req.params;
+
+  // Adjust the query to match labourId in the labourpaymentlist table
+  const query = 'SELECT * FROM labour_payment WHERE labourId = ?';
+
+  db.query(query, [labourId], (err, results) => {
+    if (err) {
+      console.error('Error fetching labour_payment records:', err);
+      res.status(500).json({ error: 'Error fetching labour_payment records' });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+
+//  get 
+app.get('/api/paymentform/:payrollId', (req, res) => {
+  const { payrollId } = req.params;
+
+  const query = 'SELECT * FROM paymentformdetails WHERE payrollId = ? ';
+  db.query(query, [payrollId], (err, results) => {
+    if (err) {
+      console.error('Error fetching paymentformdetails records:', err);
+      res.status(500).json({ error: 'Error fetching balances records' });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+app.post('/submitPayment', (req, res) => {
+  const {
+    amountDate,
+    amountPaid,
+    id,
+    labourName,
+    month,
+    paymentAmount,
+    paymentDescription,
+    paymentModeId,
+    paymentModeName,
+    projectId,
+    totalAmount,
+    year,
+  } = req.body; // Ensure the data is being sent in the request body
+
+  // Corrected SQL query
+  const sql = `
+    INSERT INTO paymentformdetails (
+      amountDate,
+      amountPaid,
+      payrollId,
+      labourName,
+      month,
+      paymentAmount,
+      paymentDescription,
+      paymentModeId,
+      paymentModeName,
+      projectId,
+      totalAmount,
+      year
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  // Corrected values array
+  const values = [
+    amountDate,
+    amountPaid,
+    id,
+    labourName,
+    month,
+    paymentAmount,
+    paymentDescription,
+    paymentModeId,
+    paymentModeName,
+    projectId,
+    totalAmount,
+    year,
+  ];
+
+  // Execute the query
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Error uploading Labour data:', err);
+      return res.status(500).send('Error uploading Labour data');
+    }
+    console.log('Labour data uploaded:', result);
+    res.send('Labour data uploaded successfully');
+  });
+});
+
+
+// Salary List Delete 
+app.delete('/api/salary/:id', (req, res) => {
+  const id = req.params.id;
+  console.log(req.body)
+  const sql = 'DELETE FROM labour_payment WHERE id = ?';
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error('Error deleting labour_payment:', err);
+      return res.status(500).send(err);
+    }
+    console.log(' labour_payment deleted:', result);
+    res.send(' labour_payment deleted');
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
 // Labour Add  
 
 
-// check /makeEntry /projectData }/api/supervisor/  /expensesledger /api/transactions/ /projectData /projectData /api/supervisor/ /ledger_entries /expensesledger /addCashPayment /changeentries/
+// check /makeEntry /projectData }/api/supervisor/  /expensesledger /api/transactions/ /projectData /projectData /api/supervisor/ /ledger_entries /expensesledger /addCashPayment /changeentries/ /addPaymentModes
 
 
 

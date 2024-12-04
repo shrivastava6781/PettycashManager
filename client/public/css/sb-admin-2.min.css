@@ -13160,6 +13160,23 @@ body.sidebar-toggled footer.sticky-footer {
     box-shadow: 1px 1px 5px black;
 }
 
+/* Employee Details */
+.attendanceColumn{
+    cursor: pointer;
+    border: 1px solid #00509d;
+    border-radius: 10px;
+    padding: 10px;
+    color: white;
+    background-color: #00509d;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for background color and text color */
+}
+
+.attendanceColumn:hover {
+    background-color: green; /* Change background color on hover */
+    color: #00509d; /* Change text color on hover */
+}
+
+
 @media screen and (max-width: 768px) {
     .topbox{
         flex-direction: column;
