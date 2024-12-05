@@ -12,6 +12,7 @@ import expressSession from 'express-session';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 
+
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -2823,7 +2824,42 @@ app.delete('/api/salary/:id', (req, res) => {
 });
 
 
+app.get("/viewattendance/:projectId", async (req, res) => {
+  const { projectId } = req.params;
+  const { month, year } = req.query;
 
+  // Validate inputs
+  if (!projectId || !month || !year) {
+    return res.status(400).json({ error: "Project ID, month, and year are required." });
+  }
+
+  try {
+    // Query to fetch attendance data for the given project, month, and year
+    const query = `
+      SELECT 
+        id, labourId, projectId, date, day_shift, night_shift, overtime_hours, created_at, updated_at
+      FROM 
+        labour_attendance
+      WHERE 
+        projectId = ? AND 
+        MONTH(date) = ? AND 
+        YEAR(date) = ?
+      ORDER BY date ASC;
+    `;
+
+    db.query(query, [projectId, month, year], (err, results) => {
+      if (err) {
+        console.error("Error executing query:", err);
+        return res.status(500).json({ error: "Database query failed." });
+      }
+
+      res.status(200).json(results);
+    });
+  } catch (error) {
+    console.error("Error fetching attendance data:", error);
+    res.status(500).json({ error: "An unexpected error occurred." });
+  }
+});
 
 
 
@@ -2835,7 +2871,7 @@ app.delete('/api/salary/:id', (req, res) => {
 // Labour Add  
 
 
-// check /makeEntry /projectData }/api/supervisor/  /expensesledger /api/transactions/ /projectData /projectData /api/supervisor/ /ledger_entries /expensesledger /addCashPayment /changeentries/ /addPaymentModes
+// check /makeEntry /projectData }/api/supervisor/  /expensesledger /api/transactions/ /projectData /projectData /api/supervisor/ /ledger_entries /expensesledger /addCashPayment /changeentries/ /addPaymentModes /viewattendance/
 
 
 

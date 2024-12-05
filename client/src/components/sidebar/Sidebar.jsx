@@ -486,19 +486,19 @@ function Sidebar() {
                 <div className="bg-white py-2 collapse-inner rounded">
                   <h6 className="collapse-header">Labour Master:</h6>
                   <a className="collapse-item" href="#" onClick={handleAddLabour}>Add Labour</a>
-                  <a className="collapse-item" href="#" onClick={handleAddLabourAmtModal}>Labour Payment</a>
+                  <Link to="/labourlist" className="collapse-item" onClick={() => handleListClick("/labourlist")}>
+                    <span>View Labour List</span>
+                  </Link>
+                  <Link to="/labourattendance" className="collapse-item" onClick={() => handleListClick("/labourattendance")}>
+                    <span>Add Attendance</span>
+                  </Link>
+                  <Link to="/viewattendance" className="collapse-item" onClick={() => handleListClick("/viewattendance")}>
+                    <span>View Attendance</span>
+                  </Link>
+                  <a className="collapse-item" href="#" onClick={handleAddLabourAmtModal}>Add Labour Amt</a>
                   <Link to="/labourpaymentlist" className="collapse-item" onClick={() => handleListClick("/labourpaymentlist")}>
                     <span>Labour Payment List</span>
                   </Link>
-                  <Link to="/labourlist" className="collapse-item" onClick={() => handleListClick("/labourlist")}>
-                    <span>Labour List</span>
-                  </Link>
-                  <Link to="/labourattendance" className="collapse-item" onClick={() => handleListClick("/labourattendance")}>
-                    <span>Add Labour Attendance</span>
-                  </Link>
-                  {/* <Link to="/viewattendance" className="collapse-item" onClick={() => handleListClick("/viewattendance")}>
-                    <span>View Attendance</span>
-                  </Link> */}
                 </div>
               </div>
             </li>
