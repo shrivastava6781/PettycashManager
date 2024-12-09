@@ -2864,10 +2864,35 @@ app.get("/viewattendance/:projectId", async (req, res) => {
 
 
 
+// Route to fetch labour attendance
+app.get('/labourattendance', async (req, res) => {
+  const { labourId, year, month } = req.query;
 
+  // Validate query parameters
+  if (!labourId || !year || !month) {
+      return res.status(400).json({ message: "labourId, year, and month are required" });
+  }
 
-
-
+  try {
+      const query = `
+          SELECT id, labourId, date, day_shift AS dayShift, night_shift AS nightShift, overtime_hours AS overtimeHours
+          FROM labour_attendance
+          WHERE labourId = ? AND YEAR(date) = ? AND MONTH(date) = ?
+      `;
+      
+      // Execute the query
+      db.query(query, [labourId, year, month], (err, results) => {
+          if (err) {
+              console.error("Failed to fetch attendance records:", err);
+              return res.status(500).json({ message: "Failed to fetch attendance records" });
+          }
+          res.json({ data: results });
+      });
+  } catch (error) {
+      console.error("Unexpected error:", error);
+      res.status(500).json({ message: "An unexpected error occurred" });
+  }
+});
 // Labour Add  
 
 

@@ -171,8 +171,14 @@ function SidebarEmployee() {
                             <div id="collapseLabour" className="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                                 <div className="bg-white py-2 collapse-inner rounded">
                                     <h6 className="collapse-header">Labour:</h6>
+                                    <Link to="/viewlabourlist" className="collapse-item" onClick={() => handleListClick("/viewlabourlist")}>
+                                        <span>Labour List</span>
+                                    </Link>
                                     <Link to="/addlabourattendance" className="collapse-item" onClick={() => handleListClick("/addlabourattendance")}>
-                                        <span>Labour Atendances</span>
+                                        <span>Labour Attendances</span>
+                                    </Link>
+                                    <Link to="/viewlabourattendance" className="collapse-item" onClick={() => handleListClick("/viewlabourattendance")}>
+                                        <span>View Labour Attendances</span>
                                     </Link>
                                     
                                 </div>

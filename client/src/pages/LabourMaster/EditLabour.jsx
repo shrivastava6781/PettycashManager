@@ -236,7 +236,7 @@ const EditLabour = ({ onClose, onUpdate, labourDetails }) => {
                                     />
                                 </div>
                                 <div className="form-group col-md-4">
-                                    <label>Overtime Hours</label>
+                                    <label>Overtime (Amt per Hrs)</label>
                                     <input
                                         name="overtimeHrs"
                                         type="number"

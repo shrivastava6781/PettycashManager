@@ -58,7 +58,7 @@ function TotalRecivedList({ handleLogout, username }) {
             <SidebarEmployee />
             <div className='w-100 bg-white'>
                 <SearchBarEmployee username={username} handleLogout={handleLogout} />
-                <div className="container-fluid ">
+                <div className="container-fluid">
                     <ToastContainer />
                     <div className="row">
                         <div className="col-xl-12 p-0 mt-2">

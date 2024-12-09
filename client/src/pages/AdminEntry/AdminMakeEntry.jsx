@@ -294,7 +294,7 @@ const AdminMakeEntry = ({ onClose, onUpdate }) => {
                             <button type="submit" className="button_details" disabled={isLoading}>
                                 {isLoading ? 'Loading...' : 'Submit'}
                             </button>
-                            <button type="button" className="button_details" onClick={onClose}>Close</button>
+                            <button type="button" className="button_action" onClick={onClose}>Close</button>
                         </div>
                     </form>
                 </div>

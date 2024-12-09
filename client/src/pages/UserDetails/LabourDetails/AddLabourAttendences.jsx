@@ -440,7 +440,7 @@ function AddLabourAttendences({ handleLogout, username }) {
                 <div className="container-fluid">
                     <ToastContainer />
                     <div className="row">
-                        <div className="col-xl-12">
+                        <div className="col-xl-12 p-0 mt-2">
                             <div
                                 style={{ borderRadius: "20px", border: "1px solid #00509d" }}
                                 className="overflow-hidden">
@@ -533,7 +533,7 @@ function AddLabourAttendences({ handleLogout, username }) {
                                                             </div>
                                                         </div>
                                                         <div className="p-0 m-0 ">
-                                                            <label className="p-0 m-0">Overtime (Hours): </label>
+                                                            <label className="p-0 m-0"> Overtime (Amt per Hrs): </label>
                                                             <input
                                                                 type="number"
                                                                 className="button_details py-0 px-1"

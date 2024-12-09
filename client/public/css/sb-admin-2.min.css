@@ -12973,6 +12973,18 @@ body.sidebar-toggled footer.sticky-footer {
 .footer-img{
     display: none;
 }
+.nav-link-labour{
+    /* padding: 4vw 2vw; */
+    color: white;
+    padding: 10px 10px;
+}
+.nav-link-labour:hover{
+    border:1px solid white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    text-decoration: none;
+    color: white;
+}
 
 
 /* login page for the responsive content */
@@ -13175,6 +13187,13 @@ body.sidebar-toggled footer.sticky-footer {
     background-color: green; /* Change background color on hover */
     color: #00509d; /* Change text color on hover */
 }
+.laptop {
+    display: block;
+  }
+  .phone {
+    display: none;
+  }
+  
 
 
 @media screen and (max-width: 768px) {
@@ -13213,7 +13232,7 @@ body.sidebar-toggled footer.sticky-footer {
     }
     .searchbarheading{
         margin-left: 30px;
-        font-size: 4vw;
+        font-size: 3.2vw;
     }
     .userentry{
         display: block;
@@ -13257,7 +13276,7 @@ body.sidebar-toggled footer.sticky-footer {
         border-radius: 5px;
         color: white;
         padding: 3px 5px;
-        font-size: 4vw;
+        font-size: 3vw;
         transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for background color and text color */
     }
     .button_details:hover {
@@ -13316,10 +13335,17 @@ body.sidebar-toggled footer.sticky-footer {
         gap: 1px;
         padding: 8px 20px;
     }
+    .laptop {
+        display: none;
+      }
+      .phone {
+        display: block;
+      }
+    
     /* .dashboardbutton{
         display: none;
     } */
 }
 
 
-/* .login-container dashboardcontainer userbutton usedashboardheading bg-gradient-primary accordionSidebar userentry  */ 
+/* .login-container searchbarheading button_details tablefont dashboardcontainer userbutton usedashboardheading bg-gradient-primary accordionSidebar userentry  */ 

@@ -67,7 +67,7 @@ const SearchBarEmployee = ({ username, handleLogout }) => {
           <div id="content-wrapper" className="d-flex flex-column">
             {/*  <!-- Topbar --> */}
             <nav className="navbar navbar-expand navbar-light bg-white topbar static-top shadow">
-              <h3 className="text-center w-100 text-uppercase searchbarheading">Petty Cash Manger</h3>
+              <h3 className="text-center w-100 text-uppercase searchbarheading">CASH & DAILY WORKER MANAGER</h3>
               <ul className="navbar-nav ml-auto">
                 {/*  <!-- Nav Item - Search Dropdown (Visible Only XS) --> */}
                 <div className="topbar-divider d-none d-sm-block"></div>

@@ -44,6 +44,8 @@ import AddLabourAttendences from './pages/UserDetails/LabourDetails/AddLabourAtt
 import LabourAttendences from './pages/LabourMaster/LabourAttendance';
 import ViewAttendance from './pages/LabourMaster/ViewAttendance';
 import LabourPaymentList from './pages/LabourMaster/LabourPaymentList';
+import ViewLabourList from './pages/UserDetails/LabourDetails/ViewLabourList';
+import ViewLabourAttendance from './pages/UserDetails/LabourDetails/ViewLabourAttendance';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -148,6 +150,8 @@ const App = () => {
             <Route path="/projectmonthlyreport" element={isAuthenticated ? <UserMonthlyReport username={username} userType={userType} employeeId={employeeId} projectId={projectId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
             <Route path="/userheadreport" element={isAuthenticated ? <UserHeadReport username={username} userType={userType} employeeId={employeeId} projectId={projectId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
             <Route path="/addlabourattendance" element={isAuthenticated ? <AddLabourAttendences username={username} userType={userType} employeeId={employeeId} projectId={projectId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
+            <Route path="/viewlabourlist" element={isAuthenticated ? <ViewLabourList username={username} userType={userType} employeeId={employeeId} projectId={projectId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
+            <Route path="/viewlabourattendance" element={isAuthenticated ? <ViewLabourAttendance username={username} userType={userType} employeeId={employeeId} projectId={projectId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
           </>
         )}
         {/* Routes accessible by 'manager' or 'admin' */}
