@@ -1,41 +1,16 @@
-// import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
-// import { toast, ToastContainer } from 'react-toastify';
-// import 'react-toastify/dist/ReactToastify.css';
-// import Sidebar from '../../components/sidebar/Sidebar';
-// import SearchBar from '../../components/sidebar/SearchBar';
-// import { Link, useNavigate } from 'react-router-dom';
-// import { ThreeDots } from 'react-loader-spinner';  // <-- Correct import for spinner
-// import AddLabour from './AddLabour';
-// import AdminMakeEntry from '../AdminEntry/AdminMakeEntry';
 
-// function LabourPaymentList({ handleLogout, username }) {
-//     const [isLoading, setIsLoading] = useState(false);
+// import React, { useEffect, useState } from 'react';
+// import axios from 'axios';
+
+// const LabourAttendance = () => {
 //     const [projects, setProjects] = useState([]);
 //     const [labour, setLabour] = useState([]);
-//     const [payroll, setPayroll] = useState([]);
-//     const [filteredPayroll, setFilteredPayroll] = useState([]);
-//     const [selectedProjects, setSelectedProjects] = useState('');
-//     const [selectedLabour, setSelectedLabour] = useState('');
-//     const [selectedMonth, setSelectedMonth] = useState(''); // Initialize with empty string
-//     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Initialize with current year
-//     const [paymentForm, setPaymentForm] = useState(null);
-//     const [isPaymentForm, setIsPaymentForm] = useState(false);
-//     const [paymentDetails, setPaymentDetails] = useState({}); // New state to store payment details
-//     // Payment History 
-//     const [paymentFormHistory, setPaymentFormHistory] = useState(null);
-//     const [isPaymentHistory, setIsPaymentHistory] = useState(false);
-
-//     const navigate = useNavigate();
-//     console.log("editsalaryslip");
-
-//     const handleEditClick = (record) => {
-//         if (record) {
-//             navigate('/editsalaryslip', { state: { salarydata: record } });
-//         } else {
-//             console.error('Salary data is not ready.');
-//         }
-//     };
+//     const [attendance, setAttendance] = useState([]);
+//         const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+//         const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+//     const [selectedProjects, setSelectedProjects] = useState(null);
+//     const [rates, setRates] = useState({ dayShiftRate: 0, nightShiftRate: 0, overtimeRate: 0 });
+//     const [paymentDetails, setPaymentDetails] = useState({}); // To store payment details by labourId
 
 //     useEffect(() => {
 //         fetchProjects();
@@ -44,29 +19,8 @@
 //     useEffect(() => {
 //         if (selectedProjects) {
 //             fetchLabour(selectedProjects);
-//             setSelectedLabour(''); // Reset selected employee when department changes
-//             fetchPayrollByProject(selectedProjects);
 //         }
 //     }, [selectedProjects]);
-
-//     useEffect(() => {
-//         if (selectedLabour) {
-//             fetchPayrollByLabour(selectedLabour);
-//         } else {
-//             // Fetch payroll by department if no employee is selected
-//             if (selectedProjects) {
-//                 fetchPayrollByProject(selectedProjects);
-//             }
-//         }
-//     }, [selectedLabour]);
-
-//     useEffect(() => {
-//         filterPayroll();
-//     }, [selectedYear, selectedMonth, payroll]);
-
-//     useEffect(() => {
-//         fetchPaymentDetails(); // Fetch payment details when payroll data changes
-//     }, [payroll]);
 
 //     const fetchProjects = async () => {
 //         try {
@@ -76,228 +30,160 @@
 //             console.error('Error fetching projects:', error);
 //         }
 //     };
+
 //     const fetchLabour = async (projectId) => {
 //         try {
 //             const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/labours/${projectId}`);
-//             setLabour(response.data);
+//             const labourData = response.data;
+//             setLabour(labourData);
+
+//             if (Array.isArray(labourData) && labourData.length > 0) {
+//                 const labourDetails = labourData[0];
+//                 setRates({
+//                     dayShiftRate: labourDetails.dayShift || 0,
+//                     nightShiftRate: labourDetails.nightShift || 0,
+//                     overtimeRate: labourDetails.overtimeHrs || 0,
+//                 });
+
+//                 const labourIds = labourData.map((labour) => labour.id);
+//                 await fetchAttendance(labourIds);
+
+//                 // Fetch payment details for all labour IDs
+//                 const paymentPromises = labourIds.map(fetchPaymentDetails);
+//                 const paymentResults = await Promise.all(paymentPromises);
+
+//                 const paymentData = labourIds.reduce((acc, labourId, index) => {
+//                     acc[labourId] = paymentResults[index];
+//                     return acc;
+//                 }, {});
+
+//                 setPaymentDetails(paymentData);
+//             }
 //         } catch (error) {
 //             console.error('Error fetching labour:', error);
 //         }
 //     };
-//     const fetchPayrollByProject = async (projectId) => {
-//         setIsLoading(true);
+
+//     const fetchAttendance = async (labourIds) => {
 //         try {
-//             const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/labourpaymentlist/project/${projectId}`);
-//             setPayroll(response.data);
-//             filterPayroll(response.data);
+//             const response = await axios.post(`${process.env.REACT_APP_LOCAL_URL}/labour-attendance`, { labourIds });
+//             setAttendance(response.data);
 //         } catch (error) {
-//             console.error('Error fetching payroll by department:', error);
-//         } finally {
-//             setIsLoading(false);
+//             console.error('Error fetching attendance:', error);
 //         }
 //     };
-//     const fetchPayrollByLabour = async (labourId) => {
+
+//     const fetchPaymentDetails = async (labourId) => {
+//         console.log("labourId", labourId); // Log the incoming labourId to confirm it is being passed correctly
 //         try {
-//             const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/labourpaymentlist/labour/${labourId}`);
-//             setPayroll(response.data);
-//             filterPayroll(response.data);
-//         } catch (error) {
-//             console.error('Error fetching payroll by employee:', error);
-//         }
-//     };
-//     const fetchPaymentDetails = async () => {
-//         setIsLoading(true);
-//         try {
-//             const details = {};
-//             for (const record of payroll) {
-//                 const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/api/paymentform/${record.id}`);
-//                 details[record.id] = response.data.reduce((sum, payment) => sum + payment.amountPaid, 0);
+//             // Make the API call to fetch payment details for the specified labourId
+//             const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/labourpaymentlist/labourpaid`, {
+//                 params: { labourId },
+//             });
+
+//             // Log the entire response to check its structure
+//             console.log("Payment details response:", response.data);
+
+//             // Extract payment details from the API response
+//             const paymentDetails = response.data;
+
+//             // Validate if paymentDetails is an array before reducing it
+//             if (Array.isArray(paymentDetails)) {
+//                 // Calculate the total paid amount by iterating over the array
+//                 const totalPaid = paymentDetails.reduce((sum, payment) => {
+//                     return sum + (payment.amountPaid || 0);
+//                 }, 0);
+
+//                 return totalPaid;
 //             }
-//             setPaymentDetails(details);
+//             return 0; // Return 0 if no valid payment details found
 //         } catch (error) {
-//             console.error('Error fetching payment details:', error);
-//         } finally {
-//             setIsLoading(false);
+//             console.error("Error fetching payment details:", error);
+//             return 0; // Return 0 in case of error
 //         }
 //     };
-//     const filterPayroll = (data = payroll) => {
-//         const filteredRecords = data.filter(record =>
-//             record.year === selectedYear &&
-//             (selectedMonth === '' || record.month === parseInt(selectedMonth))
-//         );
-//         setFilteredPayroll(filteredRecords);
-//     };
 
-//     // Payment Form 
-//     const handlePaymentForm = (record) => {
-//         setPaymentForm(record);
-//         setIsPaymentForm(true);
-//     };
+//     const calculateTotalAttendance = (labourId) => {
+//         const labourAttendance = attendance.filter((record) => record.labourId === labourId);
 
-//     const handleUpdate = () => {
-//         toast.success('Data uploaded successfully');
-//         fetchLabour(selectedProjects);
-//         setSelectedLabour(''); // Reset selected employee when department changes
-//         fetchPayrollByProject(selectedProjects);
-//     };
+//         let totalDayShift = 0;
+//         let totalNightShift = 0;
+//         let totalOvertime = 0;
+//         let totalAmount = 0;
 
-//     const monthNames = [
-//         "January", "February", "March", "April", "May", "June",
-//         "July", "August", "September", "October", "November", "December"
-//     ];
+//         labourAttendance.forEach((record) => {
+//             totalDayShift += record.dayShift || 0;
+//             totalNightShift += record.nightShift || 0;
+//             totalOvertime += record.overtimeHours || 0;
+
+//             const dayShiftAmount = (record.dayShift || 0) * (rates.dayShiftRate || 0);
+//             const nightShiftAmount = (record.nightShift || 0) * (rates.nightShiftRate || 0);
+//             const overtimeAmount = (record.overtimeHours || 0) * (rates.overtimeRate || 0);
+
+//             totalAmount += dayShiftAmount + nightShiftAmount + overtimeAmount;
+//         });
+
+//         return { totalDayShift, totalNightShift, totalOvertime, totalAmount };
+//     };
 
 //     return (
-//         <div className='d-flex w-100 h-100 bg-white'>
-//             {<Sidebar />}
-//             <div className='w-100'>
-//                 {<SearchBar />}
-//                 <div className="container-fluid">
-//                     <ToastContainer />
-//                     <div className="row">
-//                         <div className="col-xl-12">
-//                             <div className="card shadow mb-4">
-//                                 <div className="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-//                                     <h6 className="m-0 font-weight-bold text-primary">Labour Payment List</h6>
-//                                     <div className='d-flex align-items-center justify-content-center gap-1 w-50'>
-//                                         <label className='nunito text-white'>Project: </label>
-//                                         <select className="button_details overflow-hidden" value={selectedProjects}
-//                                             onChange={(e) => setSelectedProjects(e.target.value)}
-//                                         >
-//                                             <option value="" disabled>Select Department</option>
-//                                             {projects.map(project => (
-//                                                 <option key={project.id} value={project.id}>{project.projectShortName}</option>
-//                                             ))}
-//                                         </select>
-//                                     </div>
-//                                     <div className='d-flex align-items-center justify-content-center gap-1'>
-//                                         <label className='nunito text-white'>Labour Name:</label>
-//                                         <select className="button_details overflow-hidden" value={selectedLabour}
-//                                             onChange={(e) => setSelectedLabour(e.target.value)}
-//                                         >
-//                                             <option value="">Select Labour</option>
-//                                             {labour.map(labour => (
-//                                                 <option key={labour.id} value={labour.id}>{labour.labourName}</option>
-//                                             ))}
-//                                         </select>
-//                                     </div>
-//                                     <div className='d-flex align-items-center justify-content-center gap-1'>
-//                                         <label className='nunito text-white'>Filter:</label>
-//                                         <select className="button_details overflow-hidden" value={selectedMonth}
-//                                             onChange={(e) => setSelectedMonth(e.target.value)}
-//                                         >
-//                                             <option value="">Month</option>
-//                                             {Array.from({ length: 12 }, (_, i) => (
-//                                                 <option key={i} value={i + 1}>{monthNames[i]}</option>
-//                                             ))}
-//                                         </select>
-//                                         <select className="button_details overflow-hidden" value={selectedYear}
-//                                             onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-//                                         >
-//                                             <option value="">Select Year</option>
-//                                             {Array.from({ length: 10 }, (_, i) => (
-//                                                 <option key={i} value={new Date().getFullYear() - i}>{new Date().getFullYear() - i}</option>
-//                                             ))}
-//                                         </select>
-//                                     </div>
-//                                 </div>
-//                                 <div className="card-body form-row">
-//                                     <div className='col-md-12' style={{ maxHeight: "500px", overflowY: "auto" }}>
-//                                         {isLoading ? (
-//                                             <div className="d-flex justify-content-center align-items-center">
-//                                                 {/* Correct usage of spinner */}
-//                                                 <ThreeDots
-//                                                     color="#00BFFF"
-//                                                     height={80}
-//                                                     width={80}
-//                                                 />
-//                                             </div>
-//                                         ) : (
-//                                             <table className="table table-striped table-bordered" style={{ width: "100%" }}>
-//                                                 <thead style={{ position: "sticky", top: "0", zIndex: "1", backgroundColor: "#fff" }}>
-//                                                     <tr>
-//                                                         <th>Labour Name</th>
-//                                                         <th>Salary Period</th>
-//                                                         <th>Net Salary Payable</th>
-//                                                         <th>Amount Paid</th>
-//                                                         <th>Amount Due</th>
-//                                                         <th>Action</th>
-//                                                     </tr>
-//                                                 </thead>
-//                                                 <tbody>
-//                                                     <style>
-//                                                         {`.hyperlink:hover {color: blue;}`}
-//                                                     </style>
-//                                                     {filteredPayroll.length === 0 ? (
-//                                                         <tr>
-//                                                             <td colSpan="12" className="text-center">There is No Salary List.</td>
-//                                                         </tr>
-//                                                     ) : (
-//                                                         filteredPayroll.map(record => {
-//                                                             const amountPaid = paymentDetails[record.id] || 0;
-//                                                             const amountDue = (record.netSalaryPayableMonth || 0) - amountPaid;
-//                                                             const showAddPaymentButton = amountDue > 0;
+//         <div>
+//             <h1>Labour and Attendance Management</h1>
+//             <div>
+//                 <label>Select Project:</label>
+//                 <select value={selectedProjects} onChange={(e) => setSelectedProjects(e.target.value)}>
+//                     <option value="">-- Select a Project --</option>
+//                     {projects.map((project) => (
+//                         <option key={project.id} value={project.id}>
+//                             {project.projectName}
+//                         </option>
+//                     ))}
+//                 </select>
 
-//                                                             return (
-//                                                                 <tr key={record.id}>
-//                                                                     <td>
-//                                                                         {record.employeeName} <br />
-//                                                                         <small>{record.departmentName}</small>
-//                                                                     </td>
-//                                                                     <td>{monthNames[record.month - 1]} - {record.year}</td>
-//                                                                     <td>&#x20B9;{record.netSalaryPayableMonth ? record.netSalaryPayableMonth.toFixed(2) : '0.00'}</td>
-//                                                                     <td>&#x20B9;{amountPaid.toFixed(2)}</td> {/* Display total amount paid */}
-//                                                                     <td>&#x20B9;{amountDue.toFixed(2)}</td> {/* Display amount due */}
-//                                                                     <td className='d-flex flex-column'>
-//                                                                         <div className='d-flex align-items-center justify-content-center gap-1'>
-//                                                                             <button className=" m-1 btn btn-outline-danger btn-sm" onClick={() => handleEditClick(record)}>
-//                                                                                 <i className="fas fa-edit"></i>
-//                                                                             </button>
 
-//                                                                             {/* <button className=" m-1 btn btn-outline-danger btn-sm" onClick={() => handleDeleteBonous(record)}>
-//                                                                                 <i className="fa fa-trash"></i>
-//                                                                             </button> */}
-//                                                                         </div>
-//                                                                         {showAddPaymentButton && (
-//                                                                             <button className="m-1 btn btn-primary btn-sm" onClick={() => handlePaymentForm(record)}>
-//                                                                                 <i className="fa fa-plus" aria-hidden="true"></i> Add Payment
-//                                                                             </button>
-//                                                                         )}
-//                                                                     </td>
-//                                                                 </tr>
-//                                                             );
-//                                                         })
-//                                                     )}
-//                                                 </tbody>
-//                                             </table>
-//                                         )}
-//                                     </div>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                     {isPaymentForm && (
-//                         <AddLabour
-//                             record={paymentForm}
-//                             onClose={() => setIsPaymentForm(false)}
-//                             onUpdate={handleUpdate}
-//                         />
-//                     )}
-//                     {isPaymentHistory && (
-//                         <AdminMakeEntry
-//                             record={paymentFormHistory}
-//                             onClose={() => setIsPaymentHistory(false)}
-//                             onUpdate={handleUpdate}
-//                         />
-//                     )}
-//                 </div>
 //             </div>
+//             <table border="1">
+//                 <thead>
+//                     <tr>
+//                         <th>Labour ID</th>
+//                         <th>Labour Name</th>
+//                         <th>Project Name</th>
+//                         <th>Total Day Shift</th>
+//                         <th>Total Night Shift</th>
+//                         <th>Total Overtime</th>
+//                         <th>Total Amount</th>
+//                         <th>Paid</th>
+//                         <th>Due</th>
+//                     </tr>
+//                 </thead>
+//                 <tbody>
+//                     {labour.map((labourer) => {
+//                         const { totalDayShift, totalNightShift, totalOvertime, totalAmount } = calculateTotalAttendance(labourer.id);
+//                         const totalPaid = paymentDetails[labourer.id] || 0;
+//                         console.log(totalAmount, )
+//                         const totalDue = totalAmount - totalPaid;
+
+//                         return (
+//                             <tr key={labourer.id}>
+//                                 <td>{labourer.id}</td>
+//                                 <td>{labourer.labourName}</td>
+//                                 <td>{labourer.projectName}</td>
+//                                 <td>{totalDayShift} times present</td>
+//                                 <td>{totalNightShift} times present</td>
+//                                 <td>{totalOvertime} overtime hours</td>
+//                                 <td>{totalAmount.toFixed(2)}</td>
+//                                 <td>{totalPaid.toFixed(2)}</td>
+//                                 <td>{totalDue.toFixed(2)}</td>
+//                             </tr>
+//                         );
+//                     })}
+//                 </tbody>
+//             </table>
 //         </div>
 //     );
-// }
+// };
 
-// export default LabourPaymentList;
-
-
+// export default LabourAttendance;
 
 
 
@@ -314,173 +200,503 @@
 
 
 
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useEffect, useState } from 'react';
+// import axios from 'axios';
+
+// const LabourAttendance = () => {
+//     const [projects, setProjects] = useState([]);
+//     const [labour, setLabour] = useState([]);
+//     const [attendance, setAttendance] = useState([]);
+//     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+//     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+//     const [selectedProjects, setSelectedProjects] = useState(null);
+//     const [rates, setRates] = useState({ dayShiftRate: 0, nightShiftRate: 0, overtimeRate: 0 });
+//     const [paymentDetails, setPaymentDetails] = useState({}); // To store payment details by labourId
+
+//     useEffect(() => {
+//         fetchProjects();
+//     }, []);
+
+//     useEffect(() => {
+//         if (selectedProjects) {
+//             fetchLabour(selectedProjects);
+//         }
+//     }, [selectedProjects, selectedMonth, selectedYear]);
+
+//     const fetchProjects = async () => {
+//         try {
+//             const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/projects`);
+//             setProjects(response.data);
+//         } catch (error) {
+//             console.error('Error fetching projects:', error);
+//         }
+//     };
+
+//     const fetchLabour = async (projectId) => {
+//         try {
+//             const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/labours/${projectId}`);
+//             const labourData = response.data;
+//             setLabour(labourData);
+
+//             if (Array.isArray(labourData) && labourData.length > 0) {
+//                 const labourDetails = labourData[0];
+//                 setRates({
+//                     dayShiftRate: labourDetails.dayShift || 0,
+//                     nightShiftRate: labourDetails.nightShift || 0,
+//                     overtimeRate: labourDetails.overtimeHrs || 0,
+//                 });
+
+//                 const labourIds = labourData.map((labour) => labour.id);
+//                 await fetchAttendance(labourIds);
+
+//                 // Fetch payment details for all labour IDs
+//                 const paymentPromises = labourIds.map(fetchPaymentDetails);
+//                 const paymentResults = await Promise.all(paymentPromises);
+
+//                 const paymentData = labourIds.reduce((acc, labourId, index) => {
+//                     acc[labourId] = paymentResults[index];
+//                     return acc;
+//                 }, {});
+
+//                 setPaymentDetails(paymentData);
+//             }
+//         } catch (error) {
+//             console.error('Error fetching labour:', error);
+//         }
+//     };
+
+//     const fetchAttendance = async (labourIds) => {
+//         try {
+//             const response = await axios.post(`${process.env.REACT_APP_LOCAL_URL}/labour-attendance`, { labourIds });
+//             setAttendance(response.data);
+//         } catch (error) {
+//             console.error('Error fetching attendance:', error);
+//         }
+//     };
+
+//     const fetchPaymentDetails = async (labourId) => {
+//         console.log("labourId", labourId); // Log the incoming labourId to confirm it is being passed correctly
+//         try {
+//             // Make the API call to fetch payment details for the specified labourId
+//             const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/labourpaymentlist/labourpaidyear`, {
+//                 params: {
+//                     labourId,
+//                     year: selectedYear,
+//                     month: selectedMonth,
+//                 },
+//             });
+
+//             // Log the entire response to check its structure
+//             console.log("Payment details response:", response.data);
+//             // Extract payment details from the API response
+//             const paymentDetails = response.data;
+
+//             // Validate if paymentDetails is an array before reducing it
+//             if (Array.isArray(paymentDetails)) {
+//                 // Calculate the total paid amount by iterating over the array
+//                 const totalPaid = paymentDetails.reduce((sum, payment) => {
+//                     return sum + (payment.amountPaid || 0);
+//                 }, 0);
+
+//                 return totalPaid;
+//             }
+//             return 0; // Return 0 if no valid payment details found
+//         } catch (error) {
+//             console.error("Error fetching payment details:", error);
+//             return 0; // Return 0 in case of error
+//         }
+//     };
+
+//     const calculateTotalAttendance = (labourId) => {
+//         const labourAttendance = attendance.filter((record) => record.labourId === labourId);
+
+//         let totalDayShift = 0;
+//         let totalNightShift = 0;
+//         let totalOvertime = 0;
+//         let totalAmount = 0;
+
+//         labourAttendance.forEach((record) => {
+//             totalDayShift += record.dayShift || 0;
+//             totalNightShift += record.nightShift || 0;
+//             totalOvertime += record.overtimeHours || 0;
+
+//             const dayShiftAmount = (record.dayShift || 0) * (rates.dayShiftRate || 0);
+//             const nightShiftAmount = (record.nightShift || 0) * (rates.nightShiftRate || 0);
+//             const overtimeAmount = (record.overtimeHours || 0) * (rates.overtimeRate || 0);
+
+//             totalAmount += dayShiftAmount + nightShiftAmount + overtimeAmount;
+//         });
+
+//         return { totalDayShift, totalNightShift, totalOvertime, totalAmount };
+//     };
+//     return (
+//         <div>
+//             <h1>Labour and Attendance Management</h1>
+//             <div>
+//                 <label>Select Project:</label>
+//                 <select value={selectedProjects} onChange={(e) => setSelectedProjects(e.target.value)}>
+//                     <option value="">-- Select a Project --</option>
+//                     {projects.map((project) => (
+//                         <option key={project.id} value={project.id}>
+//                             {project.projectName}
+//                         </option>
+//                     ))}
+//                 </select>
+//                 <div className="form-group col-md-3">
+//                     <label className="fw-bolder text-black">Month: </label>
+//                     <select
+//                         className="form-control "
+//                         value={selectedMonth}
+//                         onChange={(e) => setSelectedMonth(e.target.value)}
+//                     >
+//                         {Array.from({ length: 12 }, (_, i) => (
+//                             <option key={i + 1} value={i + 1}>
+//                                 {new Date(0, i).toLocaleString("default", { month: "long" })}
+//                             </option>
+//                         ))}
+//                     </select>
+//                 </div>
+//                 <div className="form-group col-md-3">
+//                     <label className="fw-bolder text-black">Year: </label>
+//                     <select
+//                         className="form-control "
+//                         value={selectedYear}
+//                         onChange={(e) => setSelectedYear(e.target.value)}
+//                     >
+//                         {Array.from({ length: 10 }, (_, i) => (
+//                             <option key={i} value={new Date().getFullYear() - i}>
+//                                 {new Date().getFullYear() - i}
+//                             </option>
+//                         ))}
+//                     </select>
+//                 </div>
+//             </div>
+//             <table border="1">
+//                 <thead>
+//                     <tr>
+//                         <th>Labour ID</th>
+//                         <th>Labour Name</th>
+//                         <th>Project Name</th>
+//                         <th>Date </th>
+//                         <th>Total Day Shift</th>
+//                         <th>Total Night Shift</th>
+//                         <th>Total Overtime</th>
+//                         <th>Total Amount</th>
+//                         <th>Paid</th>
+//                         <th>Due</th>
+//                     </tr>
+//                 </thead>
+//                 <tbody>
+//                     {labour.map((labourer) => {
+//                         const { totalDayShift, totalNightShift, totalOvertime, totalAmount } = calculateTotalAttendance(labourer.id);
+//                         const totalPaid = paymentDetails[labourer.id] || 0;
+//                         console.log(totalAmount,)
+//                         const totalDue = totalAmount - totalPaid;
+
+//                         return (
+//                             <tr key={labourer.id}>
+//                                 <td>{labourer.id}</td>
+//                                 <td>{labourer.labourName}</td>
+//                                 <td>{labourer.projectName}</td>
+//                                 <td>{new Date(0, selectedMonth - 1).toLocaleString("default", { month: "long" })} {selectedYear}</td>
+//                                 <td>{totalDayShift} times present</td>
+//                                 <td>{totalNightShift} times present</td>
+//                                 <td>{totalOvertime} overtime hours</td>
+//                                 <td>{totalAmount.toFixed(2)}</td>
+//                                 <td>{totalPaid.toFixed(2)}</td>
+//                                 <td>{totalDue.toFixed(2)}</td>
+//                             </tr>
+//                         );
+//                     })}
+//                 </tbody>
+//             </table>
+//         </div>
+//     );
+// };
+
+// export default LabourAttendance;
+
+
+
+
+
+
+
+
+
+
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Sidebar from "../../components/sidebar/Sidebar";
+import SearchBar from "../../components/sidebar/SearchBar";
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Sidebar from '../../components/sidebar/Sidebar';
-import SearchBar from '../../components/sidebar/SearchBar';
-import { Link, useNavigate } from 'react-router-dom';
-import { ThreeDots } from 'react-loader-spinner';
-import PaymentForm from './PaymentForm';
-import PaymentHistory from './PaymentHistory';
+import { ThreeDots } from 'react-loader-spinner'; // Spinner
 
-function LabourPaymentList({ handleLogout, username }) {
+const LabourPaymentList = ({ handleLogout, username }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [projects, setProjects] = useState([]);
     const [labour, setLabour] = useState([]);
-    const [payroll, setPayroll] = useState([]);
-    const [filteredPayroll, setFilteredPayroll] = useState([]);
-    const [selectedProjects, setSelectedProjects] = useState('');
-    const [selectedLabour, setSelectedLabour] = useState('');
-    const [paymentDetails, setPaymentDetails] = useState({}); // New state to store payment details
-    const [selectedMonth, setSelectedMonth] = useState('');
+    const [attendance, setAttendance] = useState([]);
+    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-    const [isPaymentForm, setIsPaymentForm] = useState(false);
-    const [paymentForm, setPaymentForm] = useState(null);
-    // Edit and the history 
-    // Payment History 
-    const [paymentFormHistory, setPaymentFormHistory] = useState(null);
-    const [isPaymentHistory, setIsPaymentHistory] = useState(false);
-    const navigate = useNavigate();
+    const [selectedProjects, setSelectedProjects] = useState(null);
+    const [rates, setRates] = useState({ dayShiftRate: 0, nightShiftRate: 0, overtimeRate: 0 });
+    const [paymentDetails, setPaymentDetails] = useState({}); // To store payment details by labourId
 
-    const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
-
+    // Fetch all projects on component mount
     useEffect(() => {
         fetchProjects();
     }, []);
 
+    // Fetch labour and associated data when a project, month, or year changes
     useEffect(() => {
         if (selectedProjects) {
             fetchLabour(selectedProjects);
-            fetchPayrollByProject(selectedProjects);
         }
-    }, [selectedProjects]);
-
-    useEffect(() => {
-        if (selectedLabour) {
-            fetchPayrollByLabour(selectedLabour);
-        } else {
-            // Fetch payroll by department if no employee is selected
-            if (selectedProjects) {
-                fetchPayrollByProject(selectedProjects);
-            }
-        }
-    }, [selectedLabour]);
-
-    useEffect(() => {
-        filterPayroll();
-    }, [selectedYear, selectedMonth, payroll]);
-
-    useEffect(() => {
-        fetchPaymentDetails(); // Fetch payment details when payroll data changes
-    }, [payroll]);
+    }, [selectedProjects, selectedMonth, selectedYear]);
 
     const fetchProjects = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/projects`);
             setProjects(response.data);
         } catch (error) {
-            console.error('Error fetching projects:', error);
+            console.error("Error fetching projects:", error);
         }
     };
 
     const fetchLabour = async (projectId) => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/labours/${projectId}`);
-            setLabour(response.data);
-        } catch (error) {
-            console.error('Error fetching labour:', error);
-        }
-    };
+            const labourData = response.data;
+            setLabour(labourData);
 
-    const fetchPayrollByProject = async (projectId) => {
-        setIsLoading(true);
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/labourpaymentlist/project/${projectId}`);
-            setPayroll(response.data);
-            setFilteredPayroll(response.data); // Initialize with fetched data
-        } catch (error) {
-            console.error('Error fetching payroll by project:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+            if (Array.isArray(labourData) && labourData.length > 0) {
+                // Fetch rates from the first labour record (if applicable)
+                const labourDetails = labourData[0];
+                setRates({
+                    dayShiftRate: labourDetails.dayShift || 0,
+                    nightShiftRate: labourDetails.nightShift || 0,
+                    overtimeRate: labourDetails.overtimeHrs || 0,
+                });
 
-    const fetchPayrollByLabour = async (labourId) => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/labourpaymentlist/labour/${labourId}`);
-            setPayroll(response.data);
-            filterPayroll(response.data);
-        } catch (error) {
-            console.error('Error fetching payroll by employee:', error);
-        }
-    };
-
-    const fetchPaymentDetails = async () => {
-        setIsLoading(true);
-        try {
-            const details = {};
-            for (const record of payroll) {
-                const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/api/paymentform/${record.id}`);
-                details[record.id] = response.data.reduce((sum, payment) => sum + payment.amountPaid, 0);
+                // Fetch attendance and payment details for all labour IDs
+                const labourIds = labourData.map((labour) => labour.id);
+                await fetchAttendance(labourIds);
+                fetchAllPaymentDetails(labourIds);
             }
-            console.log("setPaymentDetails", details);
-            setPaymentDetails(details);
         } catch (error) {
-            console.error('Error fetching payment details:', error);
-        } finally {
-            setIsLoading(false);
+            console.error("Error fetching labour:", error);
         }
     };
 
-    const filterPayroll = (data = payroll) => {
-        console.log("Original Payroll Data:", data);
+    const fetchAttendance = async (labourIds) => {
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_LOCAL_URL}/labour-attendance`, {
+                labourIds,
+                month: selectedMonth,
+                year: selectedYear,
+            });
+            console.log(response.data)
+            setAttendance(response.data);
+        } catch (error) {
+            console.error("Error fetching attendance:", error);
+        }
+    };
 
-        // Filter records based on the `month` field
-        const filteredRecords = data.filter(record => {
-            if (!record.month) return false; // Skip records with no `month` field
+    const fetchPaymentDetails = async (labourId) => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/labourpaymentlist/labourpaidyear`, {
+                params: {
+                    labourId,
+                    year: selectedYear,
+                    month: selectedMonth,
+                },
+            });
 
-            const [recordYear, recordMonth] = record.month.split("-").map(Number); // Split and parse the year and month
-            const selectedYearInt = parseInt(selectedYear, 10); // Ensure `selectedYear` is a number
-            const selectedMonthInt = selectedMonth !== '' ? parseInt(selectedMonth, 10) : null;
+            const paymentDetails = response.data;
 
-            return (
-                recordYear === selectedYearInt &&
-                (selectedMonthInt === null || recordMonth === selectedMonthInt)
-            );
+            if (Array.isArray(paymentDetails)) {
+                const totalPaid = paymentDetails.reduce((sum, payment) => {
+                    return sum + (payment.amountPaid || 0);
+                }, 0);
+
+                return totalPaid;
+            }
+            return 0;
+        } catch (error) {
+            console.error("Error fetching payment details:", error);
+            return 0;
+        }
+    };
+
+    const fetchAllPaymentDetails = async (labourIds) => {
+        try {
+            const paymentPromises = labourIds.map(fetchPaymentDetails);
+            const paymentResults = await Promise.all(paymentPromises);
+
+            const paymentData = labourIds.reduce((acc, labourId, index) => {
+                acc[labourId] = paymentResults[index];
+                return acc;
+            }, {});
+
+            setPaymentDetails(paymentData);
+        } catch (error) {
+            console.error("Error fetching all payment details:", error);
+        }
+    };
+
+    const calculateTotalAttendance = (labourId) => {
+        const labourAttendance = attendance.filter((record) => record.labourId === labourId);
+
+        let totalDayShift = 0;
+        let totalNightShift = 0;
+        let totalOvertime = 0;
+        let totalAmount = 0;
+
+        labourAttendance.forEach((record) => {
+            totalDayShift += record.dayShift || 0;
+            totalNightShift += record.nightShift || 0;
+            totalOvertime += record.overtimeHours || 0;
+
+            const dayShiftAmount = (record.dayShift || 0) * (rates.dayShiftRate || 0);
+            const nightShiftAmount = (record.nightShift || 0) * (rates.nightShiftRate || 0);
+            const overtimeAmount = (record.overtimeHours || 0) * (rates.overtimeRate || 0);
+
+            totalAmount += dayShiftAmount + nightShiftAmount + overtimeAmount;
         });
 
-        console.log("Filtered Records:", filteredRecords);
-
-        // Update the filtered payroll state
-        setFilteredPayroll(filteredRecords);
-    };
-
-    const handlePaymentForm = (record) => {
-        setPaymentForm(record);
-        setIsPaymentForm(true);
-    };
-    // Payment History
-    const handlePaymentHistory = (record) => {
-        console.log("re", record)
-        setPaymentFormHistory(record);
-        setIsPaymentHistory(true);
-    };
-
-    const handleUpdate = () => {
-        toast.success('Data updated successfully');
-        if (selectedProjects) {
-            fetchPayrollByProject(selectedProjects);
-        }
+        return { totalDayShift, totalNightShift, totalOvertime, totalAmount };
     };
 
     return (
-        <div className='d-flex w-100 h-100 bg-white '>
-            {<Sidebar />}
+        // <div>
+        //     <h1>Labour Payment</h1>
+        //     <div>
+        //         <label>Select Project:</label>
+        //         <select value={selectedProjects} onChange={(e) => setSelectedProjects(e.target.value)}>
+        //             <option value="">-- Select a Project --</option>
+        //             {projects.map((project) => (
+        //                 <option key={project.id} value={project.id}>
+        //                     {project.projectName}
+        //                 </option>
+        //             ))}
+        //         </select>
+        //         <div className="form-group col-md-3">
+        //             <label className="fw-bolder text-black">Month: </label>
+        //             <select
+        //                 className="form-control"
+        //                 value={selectedMonth}
+        //                 onChange={(e) => setSelectedMonth(Number(e.target.value))}
+        //             >
+        //                 {Array.from({ length: 12 }, (_, i) => (
+        //                     <option key={i + 1} value={i + 1}>
+        //                         {new Date(0, i).toLocaleString("default", { month: "long" })}
+        //                     </option>
+        //                 ))}
+        //             </select>
+        //         </div>
+        //         <div className="form-group col-md-3">
+        //             <label className="fw-bolder text-black">Year: </label>
+        //             <select
+        //                 className="form-control"
+        //                 value={selectedYear}
+        //                 onChange={(e) => setSelectedYear(Number(e.target.value))}
+        //             >
+        //                 {Array.from({ length: 10 }, (_, i) => (
+        //                     <option key={i} value={new Date().getFullYear() - i}>
+        //                         {new Date().getFullYear() - i}
+        //                     </option>
+        //                 ))}
+        //             </select>
+        //         </div>
+        //     </div>
+        //     <table border="1">
+        //         <thead>
+        //             <tr>
+        //                 <th>Labour ID</th>
+        //                 <th>Labour Name</th>
+        //                 <th>Project Name</th>
+        //                 <th>Date</th>
+        //                 <th>Total Day Shift</th>
+        //                 <th>Total Night Shift</th>
+        //                 <th>Total Overtime</th>
+        //                 <th>Total Amount</th>
+        //                 <th>Paid</th>
+        //                 <th>Due</th>
+        //             </tr>
+        //         </thead>
+        //         <tbody>
+        //             {labour.map((labourer) => {
+        //                 const { totalDayShift, totalNightShift, totalOvertime, totalAmount } = calculateTotalAttendance(
+        //                     labourer.id
+        //                 );
+        //                 const totalPaid = paymentDetails[labourer.id] || 0;
+        //                 const totalDue = totalAmount - totalPaid;
+
+        //                 return (
+        //                     <tr key={labourer.id}>
+        //                         <td>{labourer.id}</td>
+        //                         <td>{labourer.labourName}</td>
+        //                         <td>{labourer.projectName}</td>
+        //                         <td>
+        //                             {new Date(0, selectedMonth - 1).toLocaleString("default", { month: "long" })}{" "}
+        //                             {selectedYear}
+        //                         </td>
+        //                         <td>{totalDayShift} times present</td>
+        //                         <td>{totalNightShift} times present</td>
+        //                         <td>{totalOvertime} overtime hours</td>
+        //                         <td>{totalAmount.toFixed(2)}</td>
+        //                         <td>{totalPaid.toFixed(2)}</td>
+        //                         <td>{totalDue.toFixed(2)}</td>
+        //                     </tr>
+        //                 );
+        //             })}
+        //         </tbody>
+        //     </table>
+        // </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div className='d-flex w-100 h-100 bg-white'>
+            <Sidebar />
             <div className='w-100'>
                 <SearchBar username={username} handleLogout={handleLogout} />
                 <div className="container-fluid">
@@ -491,46 +707,50 @@ function LabourPaymentList({ handleLogout, username }) {
                                 <div style={{ backgroundColor: "#00509d" }} className="row no-gutters align-items-center p-3">
                                     <div className="col">
                                         <div className="text-xs font-weight-bold text-white text-uppercase d-flex align-items-center justify-content-between" style={{ fontSize: '1.5rem' }}>
-                                            <div className="nunito text-white" >Labour Payment List</div>
-                                            <div className='d-flex align-items-center justify-content-center gap-4'>
-                                                <div className=''>
-                                                    <label className='nunito text-white'>Project: </label>
-                                                    <select className="button_details overflow-hidden mx-1" value={selectedProjects}
-                                                        onChange={(e) => setSelectedProjects(e.target.value)}
+                                            <div className="nunito text-white">Labour Payment List</div>
+                                            <div className=" d-flex gap-3">
+                                                <div className='d-flex align-items-center justify-content-center gap-2'>
+                                                    <label className='nunito text-white p-0 m-0'>Select Project:</label>
+                                                    {/* <select
+                                                        className="button_details overflow-hidden"
+                                                        value={selectedProject}
+                                                        onChange={(e) => handleProjectChange(e.target.value)}
                                                     >
-                                                        <option value="" disabled>Select Project</option>
-                                                        {projects.map(project => (
+                                                        <option value="">Select Project</option>
+                                                        {projects.map((project) => (
                                                             <option key={project.id} value={project.id}>
-                                                                {project.projectShortName}
+                                                                {project.projectName}
+                                                            </option>
+                                                        ))}
+                                                    </select> */}
+
+                                                    <select className="button_details overflow-hidden" value={selectedProjects} onChange={(e) => setSelectedProjects(e.target.value)}>
+                                                        <option value="">Select Project</option>
+                                                        {projects.map((project) => (
+                                                            <option key={project.id} value={project.id}>
+                                                                {project.projectName}
                                                             </option>
                                                         ))}
                                                     </select>
                                                 </div>
-                                                <div className=''>
-                                                    <label className='nunito text-white'>Select Labour:</label>
-                                                    <select className="button_details overflow-hidden mx-1" value={selectedLabour}
-                                                        onChange={(e) => setSelectedLabour(e.target.value)}
+                                                <div className="d-flex align-items-center justify-content-center gap-2">
+                                                    <label className='nunito text-white p-0 m-0'>Filter:</label>
+                                                    <select
+                                                        className="button_details overflow-hidden"
+                                                        value={selectedMonth}
+                                                        onChange={(e) => setSelectedMonth(Number(e.target.value))}
                                                     >
-                                                        <option value="">Select Labour</option>
-                                                        {labour.map(labour => (
-                                                            <option key={labour.id} value={labour.id}>{labour.labourName}</option>
+                                                        {Array.from({ length: 12 }, (_, i) => (
+                                                            <option key={i + 1} value={i + 1}>
+                                                                {new Date(0, i).toLocaleString("default", { month: "long" })}
+                                                            </option>
                                                         ))}
                                                     </select>
-                                                </div>
-                                                <div className=''>
-                                                    <label className='nunito text-white'>Filter:</label>
-                                                    <select className="button_details mx-1" value={selectedMonth}
-                                                        onChange={(e) => setSelectedMonth(e.target.value)}
+                                                    <select
+                                                        className="button_details overflow-hidden"
+                                                        value={selectedYear}
+                                                        onChange={(e) => setSelectedYear(Number(e.target.value))}
                                                     >
-                                                        <option value="">Month</option>
-                                                        {monthNames.map((month, index) => (
-                                                            <option key={index} value={index + 1}>{month}</option>
-                                                        ))}
-                                                    </select>
-                                                    <select className="button_details mx-1" value={selectedYear}
-                                                        onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                                                    >
-                                                        <option value="">Year</option>
                                                         {Array.from({ length: 10 }, (_, i) => (
                                                             <option key={i} value={new Date().getFullYear() - i}>
                                                                 {new Date().getFullYear() - i}
@@ -539,6 +759,7 @@ function LabourPaymentList({ handleLogout, username }) {
                                                     </select>
                                                 </div>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -548,57 +769,52 @@ function LabourPaymentList({ handleLogout, username }) {
                                         <div className="" style={{ maxHeight: "610px", overflowY: "auto" }}>
                                             {isLoading ? (
                                                 <div className="d-flex justify-content-center align-items-center">
-                                                    {/* Correct usage of spinner */}
                                                     <ThreeDots color="#00BFFF" height={80} width={80} />
                                                 </div>
                                             ) : (
                                                 <table className="table table-bordered" style={{ width: "100%" }}>
                                                     <thead style={{ position: "sticky", top: "0", zIndex: "1", backgroundColor: "#fff" }}>
                                                         <tr>
+                                                            
                                                             <th>Labour Name</th>
-                                                            <th>Month</th>
+                                                            <th>Labour ID</th>
+                                                            <th>Project Name</th>
+                                                            <th>Date</th>
+                                                            <th>Total Day Shift</th>
+                                                            <th>Total Night Shift</th>
+                                                            <th>Total Overtime</th>
                                                             <th>Total Amount</th>
                                                             <th>Paid</th>
                                                             <th>Due</th>
-                                                            <th>Actions</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {filteredPayroll.length === 0 ? (
-                                                            <tr>
-                                                                <td colSpan="6" className="text-center">No records found</td>
-                                                            </tr>
-                                                        ) : (
-                                                            filteredPayroll.map(record => {
-                                                                const amountPaid = paymentDetails[record.id] || 0;
-                                                                const amountDue = (record.totalAmount || 0) - amountPaid;
-                                                                return (
-                                                                    <tr key={record.id}>
-                                                                        <td>{record.labourName}</td>
-                                                                        <td>{monthNames[new Date(record.month).getMonth()]} {new Date(record.month).getFullYear()}</td>
-                                                                        <td>₹{record.totalAmount?.toFixed(2)}</td>
-                                                                        <td>₹{amountPaid.toFixed(2)}</td>
-                                                                        <td>₹{amountDue.toFixed(2)}</td>
-                                                                        <td>
-                                                                            <button className="m-1 btn btn-outline-info btn-sm" onClick={() => handlePaymentHistory(record)}>
-                                                                                <i className="fa fa-eye" aria-hidden="true"></i>
-                                                                            </button>
-                                                                            {/* <button className=" m-1 btn btn-outline-danger btn-sm" onClick={() => handleDeleteBonous(record)}>
-                                                                <i className="fa fa-trash"></i>
-                                                            </button> */}
-                                                                            {amountDue > 0 && (
-                                                                                <button
-                                                                                    className="btn btn-primary btn-sm"
-                                                                                    onClick={() => handlePaymentForm(record)}
-                                                                                >
-                                                                                    Add Payment
-                                                                                </button>
-                                                                            )}
-                                                                        </td>
-                                                                    </tr>
-                                                                );
-                                                            })
-                                                        )}
+                                                        {labour.map((labourer) => {
+                                                            const { totalDayShift, totalNightShift, totalOvertime, totalAmount } = calculateTotalAttendance(
+                                                                labourer.id
+                                                            );
+                                                            const totalPaid = paymentDetails[labourer.id] || 0;
+                                                            const totalDue = totalAmount - totalPaid;
+
+                                                            return (
+                                                                <tr key={labourer.id}>
+                                                                    
+                                                                    <td>{labourer.labourName}</td>
+                                                                    <td>{labourer.labourId}</td>
+                                                                    <td>{labourer.projectName}</td>
+                                                                    <td>
+                                                                        {new Date(0, selectedMonth - 1).toLocaleString("default", { month: "long" })}{" "}
+                                                                        {selectedYear}
+                                                                    </td>
+                                                                    <td>{totalDayShift} D</td>
+                                                                    <td>{totalNightShift} N</td>
+                                                                    <td>{totalOvertime} OT Hrs</td>
+                                                                    <td className='text-end'>&#x20B9;{totalAmount != null ? totalAmount.toFixed(2) : '0.00'}</td>
+                                                                    <td className='text-end'>&#x20B9;{totalPaid != null ? totalPaid.toFixed(2) : '0.00'}</td>
+                                                                    <td className='text-end'>&#x20B9;{totalDue != null ? totalDue.toFixed(2) : '0.00'}</td>
+                                                                </tr>
+                                                            );
+                                                        })}
                                                     </tbody>
                                                 </table>
                                             )}
@@ -608,36 +824,10 @@ function LabourPaymentList({ handleLogout, username }) {
                             </div>
                         </div>
                     </div>
-                    {isPaymentForm && (
-                        <PaymentForm
-                            record={paymentForm}
-                            onClose={() => setIsPaymentForm(false)}
-                            onUpdate={handleUpdate}
-                        />
-                    )}
-                    {isPaymentHistory && (
-                        <PaymentHistory
-                            record={paymentFormHistory}
-                            onClose={() => setIsPaymentHistory(false)}
-                            onUpdate={handleUpdate}
-                        />
-                    )}
                 </div>
             </div>
         </div>
     );
-}
+};
 
 export default LabourPaymentList;
-
-
-
-
-
-
-
-
-
-
-
-

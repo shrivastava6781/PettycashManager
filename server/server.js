@@ -2410,6 +2410,22 @@ app.get('/labours/:projectId', (req, res) => {
   });
 });
 
+app.get('/labourdetails/:id', (req, res) => {
+  const { id } = req.params;
+
+  // Adjust the query to match id in the labours table
+  const query = 'SELECT * FROM labour WHERE id = ?';
+
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      console.error('Error fetching labour records:', err);
+      res.status(500).json({ error: 'Error fetching labour records' });
+      return;
+    }
+    res.json(results);
+  });
+});
+
 
 
 // Endpoint to handle attendance record creation or update
@@ -2731,6 +2747,8 @@ app.get('/labourpaymentlist/labour/:labourId', (req, res) => {
 });
 
 
+
+
 //  get 
 app.get('/api/paymentform/:payrollId', (req, res) => {
   const { payrollId } = req.params;
@@ -2745,6 +2763,32 @@ app.get('/api/paymentform/:payrollId', (req, res) => {
     res.json(results);
   });
 });
+
+
+app.get('/labourpaymentlist/checklabour', async (req, res) => {
+  const { labourId, year, month } = req.query;
+
+  // Validate query parameters
+  if (!labourId || !year || !month) {
+      return res.status(400).json({ message: "labourId, year, and month are required" });
+  }
+
+  const query = `
+      SELECT * 
+      FROM paymentformdetails 
+      WHERE payrollId = ? AND year = ? AND month = ?
+  `;
+
+  db.query(query, [labourId, year, month], (err, results) => {
+      if (err) {
+          console.error('Error fetching paymentformdetails records:', err);
+          return res.status(500).json({ error: 'Error fetching paymentformdetails records' });
+      }
+      res.json(results);
+  });
+});
+
+
 
 app.post('/submitPayment', (req, res) => {
   const {
@@ -2893,10 +2937,139 @@ app.get('/labourattendance', async (req, res) => {
       res.status(500).json({ message: "An unexpected error occurred" });
   }
 });
+
 // Labour Add  
 
+// Route to fetch labour attendance
+// Route to fetch labour attendance
+// app.post('/labour-attendance', async (req, res) => {
+//   const { labourIds } = req.body; // Extract labourIds array from request body
 
-// check /makeEntry /projectData }/api/supervisor/  /expensesledger /api/transactions/ /projectData /projectData /api/supervisor/ /ledger_entries /expensesledger /addCashPayment /changeentries/ /addPaymentModes /viewattendance/
+//   if (!Array.isArray(labourIds) || labourIds.length === 0) {
+//       return res.status(400).json({ message: "Invalid or missing labourIds in request body" });
+//   }
+//   try {
+//       const query = `
+//           SELECT 
+//               id, 
+//               labourId, 
+//               date, 
+//               day_shift AS dayShift, 
+//               night_shift AS nightShift, 
+//               overtime_hours AS overtimeHours
+//           FROM 
+//               labour_attendance
+//           WHERE 
+//               labourId IN (?)
+//       `;
+      
+//       // Execute the query
+//       db.query(query, [labourIds], (err, results) => {
+//           if (err) {
+//               console.error("Failed to fetch attendance records:", err);
+//               return res.status(500).json({ message: "Failed to fetch attendance records" });
+//           }
+
+//           res.json(results); // Return the fetched attendance data
+//       });
+//   } catch (error) {
+//       console.error("Unexpected error:", error);
+//       res.status(500).json({ message: "An unexpected error occurred" });
+//   }
+// });
+
+app.post('/labour-attendance', async (req, res) => {
+  const { labourIds, month, year } = req.body; // Extract labourIds, month, and year from the request body
+
+  // Validate the inputs
+  if (!Array.isArray(labourIds) || labourIds.length === 0) {
+      return res.status(400).json({ message: "Invalid or missing labourIds in request body" });
+  }
+  if (!month || !year || isNaN(month) || isNaN(year)) {
+      return res.status(400).json({ message: "Invalid or missing month and year in request body" });
+  }
+
+  try {
+      const query = `
+          SELECT 
+              id, 
+              labourId, 
+              date, 
+              day_shift AS dayShift, 
+              night_shift AS nightShift, 
+              overtime_hours AS overtimeHours
+          FROM 
+              labour_attendance
+          WHERE 
+              labourId IN (?) AND 
+              MONTH(date) = ? AND 
+              YEAR(date) = ?
+      `;
+
+      // Execute the query
+      db.query(query, [labourIds, month, year], (err, results) => {
+          if (err) {
+              console.error("Failed to fetch attendance records:", err);
+              return res.status(500).json({ message: "Failed to fetch attendance records" });
+          }
+
+          res.json(results); // Return the fetched attendance data
+      });
+  } catch (error) {
+      console.error("Unexpected error:", error);
+      res.status(500).json({ message: "An unexpected error occurred" });
+  }
+});
+
+
+app.get('/labourpaymentlist/labourpaid', async (req, res) => {
+  const { labourId } = req.query;
+
+  // Validate query parameters
+  if (!labourId) {
+      return res.status(400).json({ message: "labourId is required" });
+  }
+
+  const query = `
+      SELECT *
+      FROM paymentformdetails 
+      WHERE payrollId = ? 
+  `;
+
+  db.query(query, [labourId], (err, results) => {
+      if (err) {
+          console.error('Error fetching paymentformdetails records:', err);
+          return res.status(500).json({ error: 'Error fetching paymentformdetails records' });
+      }
+      res.json(results);
+  });
+});
+
+app.get('/labourpaymentlist/labourpaidyear', async (req, res) => {
+  const { labourId, year, month } = req.query;
+
+  // Validate query parameters
+  if (!labourId || !year || !month) {
+      return res.status(400).json({ message: "labourId, year, and month are required" });
+  }
+
+  const query = `
+      SELECT *
+      FROM paymentformdetails 
+      WHERE payrollId = ? AND year = ? AND month = ?
+  `;
+
+  db.query(query, [labourId, year, month], (err, results) => {
+      if (err) {
+          console.error('Error fetching paymentformdetails records:', err);
+          return res.status(500).json({ error: 'Error fetching paymentformdetails records' });
+      }
+      res.json(results);
+  });
+});
+
+// check /labourpaymentlist/project/ /labourattendance paymentformdetails /labourpaymentlist/labour/ /submitPayment /makeEntry /projectData /labourpaymentlist/labour/ /api/supervisor/  /expensesledger /api/transactions/ 
+// /projectData paymentformdetails /api/paymentform/ /projectData /api/supervisor/ /ledger_entries /expensesledger /addCashPayment /changeentries/ /addPaymentModes /viewattendance/
 
 
 

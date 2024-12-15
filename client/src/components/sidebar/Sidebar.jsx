@@ -495,7 +495,9 @@ function Sidebar() {
                   <Link to="/viewattendance" className="collapse-item" onClick={() => handleListClick("/viewattendance")}>
                     <span>View Attendance</span>
                   </Link>
-                  <a className="collapse-item" href="#" onClick={handleAddLabourAmtModal}>Add Labour Amt</a>
+                  <Link to="/paylabourAmount" className="collapse-item" onClick={() => handleListClick("/paylabourAmount")}>
+                    <span>Pay Labour Payment</span>
+                  </Link>
                   <Link to="/labourpaymentlist" className="collapse-item" onClick={() => handleListClick("/labourpaymentlist")}>
                     <span>Labour Payment List</span>
                   </Link>
