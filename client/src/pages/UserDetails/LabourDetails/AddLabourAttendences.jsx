@@ -439,7 +439,8 @@ function AddLabourAttendences({ handleLogout, username }) {
                 <SearchBarEmployee username={username} handleLogout={handleLogout} />
                 <div className="container-fluid">
                     <ToastContainer />
-                    <div className="row">
+                    {/* Laptop use  */}
+                    <div className="row laptop">
                         <div className="col-xl-12 p-0 mt-2">
                             <div
                                 style={{ borderRadius: "20px", border: "1px solid #00509d" }}
@@ -533,10 +534,130 @@ function AddLabourAttendences({ handleLogout, username }) {
                                                             </div>
                                                         </div>
                                                         <div className="p-0 m-0 ">
-                                                            <label className="p-0 m-0"> Overtime (Amt per Hrs): </label>
+                                                            <label className="p-0 m-0"> Overtime : </label>
                                                             <input
                                                                 type="number"
                                                                 className="button_details py-0 px-1"
+                                                                min="0"
+                                                                value={attendanceRecord?.overtime || 0}
+                                                                onChange={(e) =>
+                                                                    handleAttendanceChange(entry.id, "overtime", parseInt(e.target.value, 10))
+                                                                }
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                    <div className="text-center mt-3">
+                                        <button className="btn btn-primary" onClick={handleSubmit}>
+                                            Submit Attendance
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* Phone USe  */}
+                    <div className="row phone">
+                        <div className="col-xl-12 p-0 mt-2">
+                            <div
+                                style={{ borderRadius: "20px", border: "1px solid #00509d" }}
+                                className="overflow-hidden">
+                                <div
+                                    style={{ backgroundColor: "#00509d" }}
+                                    className="row no-gutters align-items-center p-3"
+                                >
+
+                                    <div className="col">
+                                        <div className="text-xs font-weight-bold text-white text-uppercase userledgertable" >
+                                            <div className="nunito tablefont text-white userfont">Labour Attendance</div>
+                                            <div className="d-flex align-items-center justify-content-center gap-2 mobileline">
+                                                <label className='nunito tablefont text-white p-0 m-0 userfont '>Filter:</label>
+                                                <input
+                                                    type="date"
+                                                    style={{ padding: "1px 4px" }}
+                                                    className="button_details mx-1"
+                                                    value={selectedDate}
+                                                    onChange={(e) => setSelectedDate(e.target.value)}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr className="m-0 p-0" />
+                                <div className="p-3">
+                                    {labour.map((entry) => {
+                                        const attendanceRecord = attendanceData.find(
+                                            (record) => record.labourId === entry.id
+                                        );
+                                        return (
+                                            <div
+                                                key={entry.id}
+                                                className="mb-3 attendanceColumn"
+                                                style={{
+                                                    cursor: "pointer",
+                                                    border: "1px solid #00509d",
+                                                    borderRadius: "10px",
+                                                    padding: "10px",
+                                                    color: "white",
+                                                    // backgroundColor: "red"
+                                                    background: getBackgroundColor(attendanceRecord),
+                                                }}
+                                            >
+                                                <div
+                                                    className="d-flex flex justify-content-between align-items-center"
+                                                    onClick={() => toggleDropdown(entry.id)}
+                                                >
+                                                    <span>
+                                                        {entry.labourName}{" "}
+                                                        <span>{generateAttendanceText(attendanceRecord)}</span>
+                                                    </span>
+                                                    <span>{expandedLabour === entry.id ? "▲" : "▼"}</span>
+                                                </div>
+                                                {expandedLabour === entry.id && (
+                                                    <div
+                                                        style={{
+                                                            marginTop: "4px",
+                                                            border: "1px solid white",
+                                                            borderRadius: "10px",
+                                                            color: "white",
+                                                            padding: "5px",
+                                                            // backgroundColor: "purple",
+                                                            display: "flex",
+                                                            flexDirection:"column",
+                                                            // gap: "3vw"
+                                                        }}>
+                                                        <div style={{ display: "flex",flexDirection:"column",paddingLeft:"30px", alignItems: "start", width: "200px", justifyContent: "space-between" }} className="">
+                                                            <div className="">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="form-check-input tablefont nunito"
+                                                                    checked={attendanceRecord?.dayShift || false}
+                                                                    onChange={(e) =>
+                                                                        handleAttendanceChange(entry.id, "dayShift", e.target.checked)
+                                                                    }
+                                                                />
+                                                                <label className="form-check-label">Day Shift</label>
+                                                            </div>
+                                                            <div className="">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="form-check-input tablefont nunito"
+                                                                    checked={attendanceRecord?.nightShift || false}
+                                                                    onChange={(e) =>
+                                                                        handleAttendanceChange(entry.id, "nightShift", e.target.checked)
+                                                                    }
+                                                                />
+                                                                <label className="form-check-label">Night Shift</label>
+                                                            </div>
+                                                        </div>
+                                                        <div className="px-2 m-0 ">
+                                                            <label className="p-0 m-0"> Overtime : </label>
+                                                            <input
+                                                                type="number"
+                                                                className="button_details py-0 px-3 tablefont nunito"
                                                                 min="0"
                                                                 value={attendanceRecord?.overtime || 0}
                                                                 onChange={(e) =>

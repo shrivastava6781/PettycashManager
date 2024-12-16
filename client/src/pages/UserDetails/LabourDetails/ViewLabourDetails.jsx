@@ -4,8 +4,6 @@ import axios from "axios";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { ThreeDots } from 'react-loader-spinner';  // <-- Correct import for spinner
-import PaymentForm from "../../LabourMaster/PaymentForm";
-import PaymentHistory from "../../LabourMaster/PaymentHistory";
 
 
 
@@ -21,14 +19,10 @@ const ViewLabourDetails = ({ labour, onClose }) => {
         nightShift: 0,
         overtime: 0
     }); // Track attendance breakdown
-    // for the labour Payment 
-    const [payroll, setPayroll] = useState([]);
-    const [filteredPayroll, setFilteredPayroll] = useState([]);
-    const [paymentDetails, setPaymentDetails] = useState({});
-    const [isPaymentForm, setIsPaymentForm] = useState(false);
-    const [paymentForm, setPaymentForm] = useState(null);
-    const [paymentFormHistory, setPaymentFormHistory] = useState(null);
-    const [isPaymentHistory, setIsPaymentHistory] = useState(false);
+    // Payment of the labour 
+    const [paymentDetails, setPaymentDetails] = useState([]);
+    const [paidAmount, setPaidAmount] = useState(0);
+    const [dueAmount, setDueAmount] = useState(0);
 
     // Day and Night shift amounts
     const dayShiftRate = labour.dayShift;  // Example: Rs 5000 for Day Shift
@@ -130,86 +124,51 @@ const ViewLabourDetails = ({ labour, onClose }) => {
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
+    // paymentDetails  
 
+
+    // Fetch payment details when labour is selected
     useEffect(() => {
-        if (labour?.id) {
-            fetchPayrollByLabour();
+        if (labour.id) {
+            fetchPaymentDetails(labour.id, selectedMonth, selectedYear);
         }
-    }, [labour]);
+    }, [labour.id, selectedMonth, selectedYear]);
 
-    useEffect(() => {
-        filterPayroll();
-    }, [selectedYear, selectedMonth, payroll]);
-
-    useEffect(() => {
-        fetchPaymentDetails();
-    }, [payroll]);
-
-    const fetchPayrollByLabour = async () => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/labourpaymentlist/labour/${labour.id}`);
-            setPayroll(response.data);
-        } catch (error) {
-            console.error('Error fetching payroll by labour:', error);
-        }
-    };
 
     const fetchPaymentDetails = async () => {
-        setIsLoading(true);
         try {
-            const details = {};
-            for (const record of payroll) {
-                const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/api/paymentform/${record.id}`);
-                details[record.id] = response.data.reduce((sum, payment) => sum + payment.amountPaid, 0);
-            }
-            setPaymentDetails(details);
+            const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/labourpaymentlist/checklabour`, {
+                params: {
+                    labourId: labour.id,
+                    year: selectedYear,
+                    month: selectedMonth,
+                },
+            });
+
+            // Set payment details for the selected month and year
+            setPaymentDetails(response.data);
+
+            // Calculate paid amount for the selected month and year
+            const totalPaid = response.data.reduce((sum, payment) => sum + (payment.amountPaid || 0), 0);
+            setPaidAmount(totalPaid);
+
         } catch (error) {
-            console.error('Error fetching payment details:', error);
-        } finally {
-            setIsLoading(false);
+            console.error("Error fetching payment details:", error);
+            toast.error("Failed to fetch payment details");
         }
-    };
-
-    const filterPayroll = () => {
-        const filteredRecords = payroll.filter(record => {
-            if (!record.month) return false;
-
-            const [recordYear, recordMonth] = record.month.split("-").map(Number);
-            const selectedYearInt = parseInt(selectedYear, 10);
-            const selectedMonthInt = selectedMonth !== '' ? parseInt(selectedMonth, 10) : null;
-
-            return (
-                recordYear === selectedYearInt &&
-                (selectedMonthInt === null || recordMonth === selectedMonthInt)
-            );
-        });
-
-        setFilteredPayroll(filteredRecords);
-    };
-
-    const handlePaymentForm = (record) => {
-        setPaymentForm(record);
-        setIsPaymentForm(true);
-    };
-
-    const handlePaymentHistory = (record) => {
-        setPaymentFormHistory(record);
-        setIsPaymentHistory(true);
     };
 
     const handleUpdate = () => {
         toast.success('Data updated successfully');
-        fetchPayrollByLabour();
     };
 
 
     return (
-        <div>
-            <div className="mt-3">
+        <div className="p-2">
+            <div className="">
                 <ToastContainer />
                 <div className="bg-white rounded shadow-sm card-body">
                     <div className="row laptop">
-
                         <div className="col-md-12 d-flex ">
                             <div className="col-md-9 d-flex justify-content-between px-3">
                                 <div className="w-100">
@@ -242,7 +201,7 @@ const ViewLabourDetails = ({ labour, onClose }) => {
                                     <h3 style={{ color: "#00509d" }} className="title-detail fw-bolder m-0">
                                         Labour Dashboard
                                     </h3>
-                                    <button style={{ backgroundColor: "#00509d" }} type="button" className=" button_details" onClick={onClose}>
+                                    <button style={{ backgroundColor: "#00509d" }} type="button" className="button_details" onClick={onClose}>
                                         <i className="fa-solid fa-xmark"></i>
                                     </button>
                                 </div>
@@ -406,7 +365,7 @@ const ViewLabourDetails = ({ labour, onClose }) => {
                                                                                 <tr key={record.id}>
                                                                                     <td className="text-center">{new Date(record.date).toLocaleDateString()}</td>
                                                                                     <td className="text-center">{attendance}</td>
-                                                                                    <td className="text-center">Rs {amount.toFixed(2)}</td>
+                                                                                    <td className="text-center">&#x20B9; {amount.toFixed(2)}</td>
                                                                                 </tr>
                                                                             );
                                                                         })}
@@ -430,7 +389,7 @@ const ViewLabourDetails = ({ labour, onClose }) => {
                                             <div style={{ borderRadius: "15px", border: "1px solid #00509d" }} className='overflow-hidden'>
                                                 <div style={{ backgroundColor: "#00509d" }} className="row no-gutters align-items-center p-3">
                                                     <div className="col">
-                                                        <div className="text-xs font-weight-bold text-white text-uppercase userledgertable" style={{ fontSize: '1.5rem' }}>
+                                                        <div className="text-xs font-weight-bold text-white text-uppercase userledgertable" >
                                                             <div className="nunito tablefont text-white userfont">Labour Attendance</div>
                                                             <div className="d-flex align-items-center justify-content-center gap-2 mobileline">
                                                                 <label className='nunito tablefont text-white p-0 m-0 userfont '>Filter:</label>
@@ -472,7 +431,7 @@ const ViewLabourDetails = ({ labour, onClose }) => {
                                                                                 <tr key={record.id}>
                                                                                     <td className="text-center">{new Date(record.date).toLocaleDateString()}</td>
                                                                                     <td className="text-center">{attendance}</td>
-                                                                                    <td className="text-center">Rs {amount.toFixed(2)}</td>
+                                                                                    <td className="text-center">&#x20B9; {amount.toFixed(2)}</td>
                                                                                 </tr>
                                                                             );
                                                                         })}
@@ -501,16 +460,16 @@ const ViewLabourDetails = ({ labour, onClose }) => {
 
                                 {/* Laptop history */}
                                 <div className="tab-pane fade" id="checkin" role="tabpanel" aria-labelledby="checkin-tab">
-                                    <div className="row">
+                                    <div className="row mt-2">
                                         <div className="col-xl-12">
-                                            <div style={{ borderRadius: "20px", border: "1px solid #00509d" }} className="overflow-hidden">
+                                            <div style={{ borderRadius: "15px", border: "1px solid #00509d" }} className="overflow-hidden">
                                                 <div style={{ backgroundColor: "#00509d" }} className="row no-gutters align-items-center p-3">
                                                     <div className="col">
-                                                        <div className="text-xs font-weight-bold text-white text-uppercase d-flex align-items-center justify-content-between" style={{ fontSize: '1.5rem' }}>
-                                                            <div className="nunito text-white">Labour Details List</div>
+                                                        <div className="text-xs font-weight-bold text-white text-uppercase d-flex align-items-center justify-content-between" >
+                                                            <div className="nunito text-white m-0 p-0">Labour Details List</div>
                                                             <div className="d-flex align-items-center justify-content-center gap-4">
                                                                 <div>
-                                                                    <label className="nunito text-white">Filter:</label>
+                                                                    <label className="nunito text-white m-0 p-0">Filter:</label>
                                                                     <select
                                                                         className="button_details mx-1"
                                                                         value={selectedMonth}
@@ -550,46 +509,28 @@ const ViewLabourDetails = ({ labour, onClose }) => {
                                                                 <table className="table table-bordered" style={{ width: "100%" }}>
                                                                     <thead style={{ position: "sticky", top: "0", zIndex: "1", backgroundColor: "#fff" }}>
                                                                         <tr>
-                                                                            <th>Labour Name</th>
+                                                                            <th>S.No</th>
+                                                                            <th>Payment Date</th>
                                                                             <th>Month</th>
-                                                                            <th>Total Amount</th>
-                                                                            <th>Paid</th>
-                                                                            <th>Due</th>
-                                                                            <th>Actions</th>
+                                                                            <th>Paid Amount</th>
+                                                                            <th>Mode</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
-                                                                        {filteredPayroll.length === 0 ? (
+                                                                        {paymentDetails.length === 0 ? (
                                                                             <tr>
-                                                                                <td colSpan="6" className="text-center">No records found</td>
+                                                                                <td colSpan="5" className="text-center text-dark">No Data</td>
                                                                             </tr>
                                                                         ) : (
-                                                                            filteredPayroll.map(record => {
-                                                                                const amountPaid = paymentDetails[record.id] || 0;
-                                                                                const amountDue = (record.totalAmount || 0) - amountPaid;
-                                                                                return (
-                                                                                    <tr key={record.id}>
-                                                                                        <td>{record.labourName}</td>
-                                                                                        <td>{monthNames[new Date(record.month).getMonth()]} {new Date(record.month).getFullYear()}</td>
-                                                                                        <td>₹{record.totalAmount?.toFixed(2)}</td>
-                                                                                        <td>₹{amountPaid.toFixed(2)}</td>
-                                                                                        <td>₹{amountDue.toFixed(2)}</td>
-                                                                                        <td>
-                                                                                            <button className="m-1 btn btn-outline-info btn-sm" onClick={() => handlePaymentHistory(record)}>
-                                                                                                <i className="fa fa-eye" aria-hidden="true"></i>
-                                                                                            </button>
-                                                                                            {amountDue > 0 && (
-                                                                                                <button
-                                                                                                    className="btn btn-primary btn-sm"
-                                                                                                    onClick={() => handlePaymentForm(record)}
-                                                                                                >
-                                                                                                    Add Payment
-                                                                                                </button>
-                                                                                            )}
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                );
-                                                                            })
+                                                                            paymentDetails.map((entry, index) => (
+                                                                                <tr key={index}>
+                                                                                    <td>{index + 1}</td> {/* Serial Number */}
+                                                                                    <td> {new Date(entry.amountDate).toLocaleDateString('en-GB')}</td>
+                                                                                    <td>{new Date(0, selectedMonth - 1).toLocaleString("default", { month: "long" })} {selectedYear}</td>
+                                                                                    <td className='text-end'>&#x20B9;{entry.amountPaid != null ? entry.amountPaid.toFixed(2) : '0.00'}</td>
+                                                                                    <td>{entry.paymentModeName}</td>
+                                                                                </tr>
+                                                                            ))
                                                                         )}
                                                                     </tbody>
                                                                 </table>
@@ -604,12 +545,12 @@ const ViewLabourDetails = ({ labour, onClose }) => {
 
                                 {/* Phone  history */}
                                 <div className="tab-pane fade" id="checkin_phone" role="tabpanel" aria-labelledby="checkin_phone-tab">
-                                    <div className="row p-1">
+                                    <div className="row mt-2">
                                         <div className="col-md-12">
                                             <div style={{ borderRadius: "15px", border: "1px solid #00509d" }} className='overflow-hidden'>
                                                 <div style={{ backgroundColor: "#00509d" }} className="row no-gutters align-items-center p-3">
                                                     <div className="col">
-                                                        <div className="text-xs font-weight-bold text-white text-uppercase userledgertable" style={{ fontSize: '1.5rem' }}>
+                                                        <div className="text-xs font-weight-bold text-white text-uppercase userledgertable" >
                                                             <div className="nunito tablefont text-white userfont">Labour Details List</div>
                                                             <div className="d-flex align-items-center justify-content-center gap-2 mobileline">
                                                                 <label className='nunito tablefont text-white p-0 m-0 userfont '>Filter:</label>
@@ -642,60 +583,36 @@ const ViewLabourDetails = ({ labour, onClose }) => {
                                                 <hr className='m-0 p-0' />
                                                 <div className=''>
                                                     <div className="card-body">
-                                                        <div className="forresponsive">
+                                                        <div className="" style={{ maxHeight: "610px", overflowY: "auto" }}>
                                                             {isLoading ? (
                                                                 <div className="d-flex justify-content-center align-items-center">
                                                                     <ThreeDots color="#00BFFF" height={80} width={80} />
                                                                 </div>
-                                                            ) : filteredPayroll.length === 0 ? (
-                                                                <p className="nunito tablefont text-black text-center text-muted">No Records Found</p>
                                                             ) : (
-                                                                filteredPayroll.map((record) => {
-                                                                    const amountPaid = paymentDetails[record.id] || 0;
-                                                                    const amountDue = (record.totalAmount || 0) - amountPaid;
-
-                                                                    return (
-                                                                        <div
-                                                                            key={record.id}
-                                                                            style={{
-                                                                                border: "1px solid #00509d",
-                                                                                borderRadius: "10px",
-                                                                                background: "linear-gradient(9deg, rgba(64,163,160,1) 19%, #00509d 93%)",
-                                                                            }}
-                                                                            className="p-1 m-1 text-white"
-                                                                        >
-                                                                            <div className="d-flex align-items-start p-1">
-                                                                                <div className="w-100">
-                                                                                    <div className="tabledetails">
-                                                                                        <div>
-                                                                                            <p className="tablefont nunito m-0 p-0">
-                                                                                                {record.labourName}
-                                                                                            </p>
-                                                                                            <p className="tablefont nunito m-0 p-0">
-                                                                                                <span>Month: </span>
-                                                                                                {monthNames[new Date(record.month).getMonth()]} {new Date(record.month).getFullYear()}
-                                                                                            </p>
-                                                                                            <p className="tablefont nunito m-0 p-0">
-                                                                                                <span>Total Amount: </span>₹{record.totalAmount?.toFixed(2)}
-                                                                                            </p>
-                                                                                        </div>
-                                                                                        <div className="text-end">
-                                                                                            <p className="tablefont nunito m-0 p-0">
-                                                                                                <span>Paid: </span>₹{amountPaid.toFixed(2)}
-                                                                                            </p>
-                                                                                            <p className="tablefont nunito m-0 p-0">
-                                                                                                <span>Due: </span>₹{amountDue.toFixed(2)}
-                                                                                            </p>
-                                                                                            <button onClick={() => handlePaymentHistory(record)} className="button_details px-1 py-0">
-                                                                                                view
-                                                                                            </button>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    );
-                                                                })
+                                                                <table className="table table-bordered" style={{ width: "100%" }}>
+                                                                    <thead style={{ position: "sticky", top: "0", zIndex: "1", backgroundColor: "#fff" }}>
+                                                                        <tr>
+                                                                            <th>Payment Date</th>
+                                                                            <th>Paid Amount</th>
+                                                                            <th>Mode</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {paymentDetails.length === 0 ? (
+                                                                            <tr>
+                                                                                <td colSpan="5" className="text-center text-dark">No Data</td>
+                                                                            </tr>
+                                                                        ) : (
+                                                                            paymentDetails.map((entry, index) => (
+                                                                                <tr key={index}>
+                                                                                    <td> {new Date(entry.amountDate).toLocaleDateString('en-GB')}</td>
+                                                                                    <td className='text-end'>&#x20B9;{entry.amountPaid != null ? entry.amountPaid.toFixed(2) : '0.00'}</td>
+                                                                                    <td>{entry.paymentModeName}</td>
+                                                                                </tr>
+                                                                            ))
+                                                                        )}
+                                                                    </tbody>
+                                                                </table>
                                                             )}
                                                         </div>
                                                     </div>
@@ -709,24 +626,8 @@ const ViewLabourDetails = ({ labour, onClose }) => {
                         </div>
                     </div>
                 </div>
-                {isPaymentForm && (
-                    <PaymentForm
-                        record={paymentForm}
-                        onClose={() => setIsPaymentForm(false)}
-                        onUpdate={handleUpdate}
-                    />
-                )}
-                {isPaymentHistory && (
-                    <PaymentHistory
-                        record={paymentFormHistory}
-                        onClose={() => setIsPaymentHistory(false)}
-                    />
-                )}
             </div>
         </div>
-
-
-
     );
 };
 

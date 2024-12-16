@@ -47,6 +47,7 @@ import LabourPaymentList from './pages/LabourMaster/LabourPaymentList';
 import ViewLabourList from './pages/UserDetails/LabourDetails/ViewLabourList';
 import ViewLabourAttendance from './pages/UserDetails/LabourDetails/ViewLabourAttendance';
 import PayLabourPayment from './pages/LabourMaster/PayLabourPayment';
+import LabourReport from './pages/AllReportMaster/LabourReport';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -186,6 +187,7 @@ const App = () => {
             <Route path="/cashledgerreport" element={isAuthenticated ? <CashLedgerReport username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
             <Route path="/expensesCashreport" element={isAuthenticated ? <ExpensesCashReport username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
             <Route path="/pettycashreport" element={isAuthenticated ? <PettyCashReport username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
+            <Route path="/labourreport" element={isAuthenticated ? <LabourReport username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
             <Route path="/projectcreditdebitreport" element={isAuthenticated ? <ProjectCreditDebitReport username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
             <Route path="/approvreject" element={isAuthenticated ? <ApprovRejectList username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
           </>

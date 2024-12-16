@@ -3068,6 +3068,23 @@ app.get('/labourpaymentlist/labourpaidyear', async (req, res) => {
   });
 });
 
+app.get('/labourproject/:projectId', (req, res) => {
+  const { projectId } = req.params;
+
+  // Adjust the query to match projectId in the labours table
+  const query = 'SELECT * FROM labour WHERE projectId = ?';
+
+  db.query(query, [projectId], (err, results) => {
+    if (err) {
+      console.error('Error fetching labour records:', err);
+      res.status(500).json({ error: 'Error fetching labour records' });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+
 // check /labourpaymentlist/project/ /labourattendance paymentformdetails /labourpaymentlist/labour/ /submitPayment /makeEntry /projectData /labourpaymentlist/labour/ /api/supervisor/  /expensesledger /api/transactions/ 
 // /projectData paymentformdetails /api/paymentform/ /projectData /api/supervisor/ /ledger_entries /expensesledger /addCashPayment /changeentries/ /addPaymentModes /viewattendance/
 

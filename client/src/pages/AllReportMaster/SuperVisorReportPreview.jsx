@@ -178,8 +178,8 @@ const SuperVisorReportPreview = ({ record, onClose }) => {
                     </div>
                     <div className="card-body form-row">
                         <div className='col-md-12'>
-                            <table className="table table-bordered" style={{ width: "100%" }}>
-                                <thead style={{ position: "sticky", top: "0", zIndex: "1", backgroundColor: "#fff" }}>
+                            <table className="table table-striped table-bordered rounded border">
+                                <thead>
                                     <tr>
                                         <th>Project Name</th>
                                         <th>Supervisor Name</th>

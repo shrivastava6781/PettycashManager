@@ -187,11 +187,11 @@ function ViewLabourList({ handleLogout, username }) {
             <SidebarEmployee />
             <div className="w-100">
                 <SearchBarEmployee username={username} handleLogout={handleLogout} />
-                <div className="container-fluid">
+                <div className="container-fluid p-0">
                     <ToastContainer />
                     {!showLabourDetails ? (
                         <div>
-                            <div className="row laptop">
+                            <div className="row laptop px-4">
                                 <div className="col-xl-12 p-0 mt-2">
                                     <div style={{ borderRadius: "20px", border: "1px solid #00509d" }} className="overflow-hidden">
                                         <div style={{ backgroundColor: "#00509d" }} className="row no-gutters align-items-center p-3">
@@ -302,7 +302,7 @@ function ViewLabourList({ handleLogout, username }) {
                                 </div>
                             </div>
 
-                            <div className="row phone">
+                            <div className="row phone px-4">
                                 <div className="col-xl-12 p-0 mt-2">
                                     <div style={{ borderRadius: "20px", border: "1px solid #00509d" }} className='overflow-hidden'>
                                         <div style={{ backgroundColor: "#00509d" }} className="row no-gutters align-items-center p-3">

@@ -1077,7 +1077,6 @@ function PayLabourPayment({ handleLogout, username }) {
                                                                     <td>{index + 1}</td> {/* Serial Number */}
                                                                     <td> {new Date(entry.amountDate).toLocaleDateString('en-GB')}</td>
                                                                     <td>{new Date(0, selectedMonth - 1).toLocaleString("default", { month: "long" })} {selectedYear}</td>
-                                                                    {/* <td>{entry.amountPaid}</td> */}
                                                                     <td className='text-end'>&#x20B9;{entry.amountPaid != null ? entry.amountPaid.toFixed(2) : '0.00'}</td>
                                                                     <td>{entry.paymentModeName}</td>
                                                                 </tr>
@@ -1091,7 +1090,6 @@ function PayLabourPayment({ handleLogout, username }) {
                                 </div>
                             </div>
                         </div>
-
                     </div>
                     {isPaymentForm && (
                         <PaymentForm

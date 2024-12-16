@@ -527,6 +527,9 @@ function Sidebar() {
                   <Link to="/supervisorreport" className="collapse-item" onClick={() => handleListClick("/supervisorreport")}>
                     <span>SuperVisor Report</span>
                   </Link>
+                  <Link to="/labourreport" className="collapse-item" onClick={() => handleListClick("/labourreport")}>
+                    <span>Labour Report</span>
+                  </Link>
                   <Link to="/cashledgerreport" className="collapse-item" onClick={() => handleListClick("/cashledgerreport")}>
                     <span>Payment Report</span>
                   </Link>

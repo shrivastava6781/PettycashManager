@@ -42,20 +42,20 @@ const EmployeeReportPreview = ({ record, onClose }) => {
                         </div>
                         <h4 style={{ color: "#00509d" }} className='title-detail text-uppercase fw-bolder font-bold m-0'>Employee List Report</h4>
                         <div>
-                        <h5 style={{ color: "#00509d" }} className='title-detail text-uppercase fw-bolder font-bold m-0'>{setting.title || 'PETTY CASH MANAGER'}</h5>
+                            <h5 style={{ color: "#00509d" }} className='title-detail text-uppercase fw-bolder font-bold m-0'>{setting.title || 'PETTY CASH MANAGER'}</h5>
                         </div>
                     </div>
                     <div className="card-body form-row">
                         <div className='col-md-12'>
-                            <table className="table table-bordered" style={{ width: "100%" }}>
-                                <thead style={{ position: "sticky", top: "0", zIndex: "1", backgroundColor: "#fff" }}>
+                            <table className="table table-striped table-bordered rounded border">
+                                <thead>
                                     <tr>
-                                        <th style={{whiteSpace:"nowrap"}}>S.No</th>
-                                        <th style={{whiteSpace:"nowrap"}}>Employee Name</th>
-                                        <th style={{whiteSpace:"nowrap"}}>Employee Code</th>
-                                        <th style={{whiteSpace:"nowrap"}}>Fathers Name</th>
-                                        <th style={{whiteSpace:"nowrap"}}>Phone No.</th>
-                                        <th style={{whiteSpace:"nowrap"}}>Email Id.</th>
+                                        <th style={{ whiteSpace: "nowrap" }}>S.No</th>
+                                        <th style={{ whiteSpace: "nowrap" }}>Employee Name</th>
+                                        <th style={{ whiteSpace: "nowrap" }}>Employee Code</th>
+                                        <th style={{ whiteSpace: "nowrap" }}>Fathers Name</th>
+                                        <th style={{ whiteSpace: "nowrap" }}>Phone No.</th>
+                                        <th style={{ whiteSpace: "nowrap" }}>Email Id.</th>
                                     </tr>
                                 </thead>
                                 <tbody>

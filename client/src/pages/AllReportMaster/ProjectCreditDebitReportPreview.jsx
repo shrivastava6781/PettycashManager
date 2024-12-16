@@ -9,7 +9,7 @@ const ProjectCreditDebitReportPreview = ({ record, onClose }) => {
     const [setting, setSetting] = useState({});
     const year = record.selectedYear;
     const [grandTotals, setGrandTotals] = useState({ totalcredit: 0, totaldebit: 0 }); // State for grand totals
-    console.log("record",record)
+    console.log("record", record)
     useEffect(() => {
         const fetchSetting = async () => {
             try {
@@ -68,8 +68,8 @@ const ProjectCreditDebitReportPreview = ({ record, onClose }) => {
                             </div>
                         </div>
                         <div className='d-flex align-items-center justify-content-center flex-column'>
-                        <h4 style={{ color: "#00509d" }} className='title-detail text-uppercase fw-bolder font-bold m-0'>Monthly Project Report</h4>
-                        <small>{record.projectName}</small>
+                            <h4 style={{ color: "#00509d" }} className='title-detail text-uppercase fw-bolder font-bold m-0'>Monthly Project Report</h4>
+                            <small>{record.projectName}</small>
                         </div>
                         <div className='d-flex align-items-center justify-content-center flex-column '>
                             <h5
@@ -90,8 +90,8 @@ const ProjectCreditDebitReportPreview = ({ record, onClose }) => {
                     </div>
                     <div className="card-body form-row">
                         <div className='col-md-12'>
-                            <table className="table table-bordered" style={{ width: "100%" }}>
-                                <thead style={{ position: "sticky", top: "0", zIndex: "1", backgroundColor: "#fff" }}>
+                            <table className="table table-striped table-bordered rounded border">
+                                <thead>
                                     <tr>
                                         <th>Month-Year</th>
                                         <th>Total Credit</th>
@@ -108,9 +108,9 @@ const ProjectCreditDebitReportPreview = ({ record, onClose }) => {
                                         filteredProjects.map((summary, index) => (
                                             <tr key={index}>
                                                 <td>{summary.monthYear}</td>
-                                                <td className='text-end'>&#x20B9;{summary.credit != null ?  summary.credit.toFixed(2) : '0.00'}</td>
-                                                <td className='text-end'>&#x20B9;{summary.debit != null ?  summary.debit.toFixed(2) : '0.00'}</td>
-                                                <td className='text-end'>&#x20B9;{summary.balance != null ?  summary.balance.toFixed(2) : '0.00'}</td>
+                                                <td className='text-end'>&#x20B9;{summary.credit != null ? summary.credit.toFixed(2) : '0.00'}</td>
+                                                <td className='text-end'>&#x20B9;{summary.debit != null ? summary.debit.toFixed(2) : '0.00'}</td>
+                                                <td className='text-end'>&#x20B9;{summary.balance != null ? summary.balance.toFixed(2) : '0.00'}</td>
                                             </tr>
                                         ))
                                     )}
@@ -118,9 +118,9 @@ const ProjectCreditDebitReportPreview = ({ record, onClose }) => {
                                 <tfoot>
                                     <tr>
                                         <th>Totals</th>
-                                        <th className="text-success text-end">&#x20B9;{ grandTotals.totalcredit != null ?  grandTotals.totalcredit.toFixed(2) : '0.00'}</th>
-                                        <th className="text-danger text-end">&#x20B9;{ grandTotals.totaldebit != null ?  grandTotals.totaldebit.toFixed(2) : '0.00'}</th>
-                                        <th className='text-end'>&#x20B9;{(grandTotals.totalcredit - grandTotals.totaldebit).toFixed(2) }</th>
+                                        <th className="text-success text-end">&#x20B9;{grandTotals.totalcredit != null ? grandTotals.totalcredit.toFixed(2) : '0.00'}</th>
+                                        <th className="text-danger text-end">&#x20B9;{grandTotals.totaldebit != null ? grandTotals.totaldebit.toFixed(2) : '0.00'}</th>
+                                        <th className='text-end'>&#x20B9;{(grandTotals.totalcredit - grandTotals.totaldebit).toFixed(2)}</th>
                                     </tr>
                                 </tfoot>
                             </table>
