@@ -3,34 +3,46 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ThreeDots } from "react-loader-spinner";
-import SidebarEmployee from "../../../components/sidebar/SidebarEmployee";
-import SearchBarEmployee from "../../../components/sidebar/SearchBarEmployee";
+import Sidebar from "../../components/sidebar/Sidebar";
+import SearchBar from "../../components/sidebar/SearchBar";
 
-function ViewLabourAttendance({ handleLogout, username }) {
+function ProjectLabourAttendance({ handleLogout, username }) {
     const [isLoading, setIsLoading] = useState(false);
+    const [projects, setProjects] = useState([]);
     const [selectedProject, setSelectedProject] = useState("");
     const [labour, setLabour] = useState([]);
     const [attendanceData, setAttendanceData] = useState([]);
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [daysInMonth, setDaysInMonth] = useState(31);
-    const projectId = localStorage.getItem("projectId");
 
     useEffect(() => {
-        if (projectId) {
-            fetchLabourByProject(projectId);
+        if (selectedProject) {
+            fetchLabourByProject(selectedProject);
         }
-    }, [projectId]);
+    }, [selectedProject]);
 
+    useEffect(() => {
+        fetchProjects();
+    }, []);
 
-    const fetchLabourByProject = async (projectId) => {
+    const fetchProjects = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/projects`);
+            setProjects(response.data);
+        } catch (error) {
+            console.error("Error fetching projects:", error);
+        }
+    };
+
+    const fetchLabourByProject = async (selectedProject) => {
         setIsLoading(true);
         try {
             const labourResponse = await axios.get(
-                `${process.env.REACT_APP_LOCAL_URL}/labours/${projectId}`
+                `${process.env.REACT_APP_LOCAL_URL}/labours/${selectedProject}`
             );
             const attendanceResponse = await axios.get(
-                `${process.env.REACT_APP_LOCAL_URL}/viewattendance/${projectId}?month=${selectedMonth + 1}&year=${selectedYear}`
+                `${process.env.REACT_APP_LOCAL_URL}/viewattendance/${selectedProject}?month=${selectedMonth + 1}&year=${selectedYear}`
             );
             setLabour(labourResponse.data);
             setAttendanceData(attendanceResponse.data);
@@ -93,14 +105,15 @@ function ViewLabourAttendance({ handleLogout, username }) {
             setAttendanceData([]);
         }
     };
+
     return (
         <div className='d-flex w-100 h-100 bg-white '>
-            {<SidebarEmployee />}
+            {<Sidebar />}
             <div className='w-100'>
-                <SearchBarEmployee username={username} handleLogout={handleLogout} />
+                <SearchBar username={username} handleLogout={handleLogout} />
                 <div className="container-fluid">
                     <ToastContainer />
-                    <div className="row ">
+                    <div  className="row ">
                         <div className="col-xl-12 p-0 mt-2">
                             <div style={{ borderRadius: "20px", border: "1px solid #00509d" }} className='overflow-hidden'>
                                 <div style={{ backgroundColor: "#00509d" }} className="row no-gutters align-items-center p-3">
@@ -108,6 +121,21 @@ function ViewLabourAttendance({ handleLogout, username }) {
                                         <div className="text-xs font-weight-bold text-white text-uppercase userledgertable" style={{ fontSize: '1.5rem' }}>
                                             <div className="nunito text-white userfont">Project Attendance</div>
                                             <div className="d-flex align-items-center justify-content-center gap-2 mobileline">
+                                                <div className="">
+                                                    <label className="nunito text-white p-0 m-0 userfont ">Project: </label>
+                                                    <select
+                                                        className="button_details mx-1"
+                                                        value={selectedProject}
+                                                        onChange={(e) => setSelectedProject(e.target.value)}
+                                                    >
+                                                        <option value="">Select Project</option>
+                                                        {projects.map((project) => (
+                                                            <option key={project.id} value={project.id}>
+                                                                {project.projectShortName}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
                                                 <label className='nunito text-white p-0 m-0 userfont '>Filter:</label>
                                                 <select
                                                     className="button_details mx-1"
@@ -147,53 +175,7 @@ function ViewLabourAttendance({ handleLogout, username }) {
                                 </div>
                                 <hr className='m-0 p-0' />
                                 <div className=''>
-                                    {/* <div className="card-body">
-                                        {isLoading ? (
-                                            <div className="d-flex justify-content-center">
-                                                <ThreeDots color="#00BFFF" height={80} width={80} />
-                                            </div>
-                                        ) : labour.length === 0 ? (
-                                            <div className="text-center">
-                                                No labour data available for the selected project.
-                                            </div>
-                                        ) : (
-                                            <table className="table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Name</th>
-                                                        {[...Array(daysInMonth).keys()].map((day) => (
-                                                            <th key={day + 1}>{day + 1}</th>
-                                                        ))}
-                                                        <th> Day Shift</th>
-                                                        <th> Night Shift</th>
-                                                        <th> Over Night</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {labour.map((lab) => (
-                                                        <tr key={lab.id}>
-                                                            <td>{lab.labourName}</td>
-                                                            {[...Array(daysInMonth).keys()].map((day) => (
-                                                                <td key={day + 1}>
-                                                                    {getAttendanceForDay(lab.id, day + 1)}
-                                                                </td>
-                                                            ))}
-                                                            <td>
-                                                                {calculateTotalShifts(lab.id, "day")}
-                                                            </td>
-                                                            <td>
-                                                                {calculateTotalShifts(lab.id, "night")}
-                                                            </td>
-                                                            <td>
-                                                                {calculateTotalShifts(lab.id, "overtime")}
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        )}
-                                    </div> */}
-                                    <div className="card-body">
+                                    <div  className="card-body">
                                         {isLoading ? (
                                             <div className="d-flex justify-content-center">
                                                 <ThreeDots color="#00BFFF" height={80} width={80} />
@@ -250,7 +232,7 @@ function ViewLabourAttendance({ handleLogout, username }) {
     );
 }
 
-export default ViewLabourAttendance;
+export default ProjectLabourAttendance;
 
 
 

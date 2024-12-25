@@ -12948,6 +12948,28 @@ body.sidebar-toggled footer.sticky-footer {
     color: white; /* Text color for options */
 }
 
+/* Employee Details */
+.button_details_payment {
+    background-color: transparent;
+    border: 1px solid black;
+    border-radius: 3px;
+    color: white;
+    padding: 3px 10px;
+    font-size: 1vw;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for background color and text color */
+}
+
+.button_details_payment:hover {
+    opacity: 1; /* Change background color on hover */
+    color: #00509d; /* Change text color on hover */
+}
+
+/* Ensure the selected option text remains visible */
+.button_details_payment option {
+    background-color: #00509d; /* Darker background for dropdown options */
+    color: white; /* Text color for options */
+}
+
 .button_action {
     background-color: #00509d;
     border: 1px solid white;
@@ -13193,6 +13215,7 @@ body.sidebar-toggled footer.sticky-footer {
   .phone {
     display: none;
   }
+
   
 
 
@@ -13348,4 +13371,4 @@ body.sidebar-toggled footer.sticky-footer {
 }
 
 
-/* .login-container searchbarheading button_details tablefont dashboardcontainer userbutton usedashboardheading bg-gradient-primary accordionSidebar userentry  */ 
+/* .login-container button_details searchbarheading button_details tablefont dashboardcontainer userbutton usedashboardheading bg-gradient-primary accordionSidebar userentry  */ 

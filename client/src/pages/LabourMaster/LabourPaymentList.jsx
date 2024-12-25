@@ -14,7 +14,7 @@ const LabourPaymentList = ({ handleLogout, username }) => {
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [selectedProjects, setSelectedProjects] = useState(null);
-    const [rates, setRates] = useState({ dayShiftRate: 0, nightShiftRate: 0, overtimeRate: 0 });
+    const [rates, setRates] = useState({ dayShiftRate: 0, nightShiftRate: 0, overtimeRate: 0,halfDayShiftRate: 0 });
     const [paymentDetails, setPaymentDetails] = useState({}); // To store payment details by labourId
 
     // Fetch all projects on component mount
@@ -50,6 +50,8 @@ const LabourPaymentList = ({ handleLogout, username }) => {
                 setRates({
                     dayShiftRate: labourDetails.dayShift || 0,
                     nightShiftRate: labourDetails.nightShift || 0,
+                    halfDayShiftRate: labourDetails.halfDayShift || 0,
+                    absentShiftRate: labourDetails.absentShift || 0,
                     overtimeRate: labourDetails.overtimeHrs || 0,
                 });
 
@@ -124,22 +126,28 @@ const LabourPaymentList = ({ handleLogout, username }) => {
 
         let totalDayShift = 0;
         let totalNightShift = 0;
+        let totalHalfDayShift = 0;
+        let totalAbsentShift = 0;
         let totalOvertime = 0;
         let totalAmount = 0;
 
         labourAttendance.forEach((record) => {
             totalDayShift += record.dayShift || 0;
             totalNightShift += record.nightShift || 0;
+            totalHalfDayShift += record.halfDayShift || 0;
+            totalAbsentShift += record.absentShift || 0;
             totalOvertime += record.overtimeHours || 0;
 
             const dayShiftAmount = (record.dayShift || 0) * (rates.dayShiftRate || 0);
             const nightShiftAmount = (record.nightShift || 0) * (rates.nightShiftRate || 0);
+            const halfDayShiftAmount = (record.halfDayShift || 0) * (rates.halfDayShiftRate || 0);
+            const absentShiftAmount = (record.absentShift || 0) * (rates.absentShiftRate || 0);
             const overtimeAmount = (record.overtimeHours || 0) * (rates.overtimeRate || 0);
 
-            totalAmount += dayShiftAmount + nightShiftAmount + overtimeAmount;
+            totalAmount += dayShiftAmount + nightShiftAmount + overtimeAmount + halfDayShiftAmount + absentShiftAmount;
         });
 
-        return { totalDayShift, totalNightShift, totalOvertime, totalAmount };
+        return { totalDayShift, totalNightShift,totalHalfDayShift,totalAbsentShift, totalOvertime, totalAmount };
     };
 
     return (
@@ -211,11 +219,13 @@ const LabourPaymentList = ({ handleLogout, username }) => {
                                                         <tr>
                                                             <th>Labour Name</th>
                                                             <th>Labour ID</th>
-                                                            <th>Project Name</th>
-                                                            <th>Date</th>
-                                                            <th>Total Day Shift</th>
-                                                            <th>Total Night Shift</th>
-                                                            <th>Total Overtime</th>
+                                                            {/* <th>Project Name</th> */}
+                                                            {/* <th>Date</th> */}
+                                                            <th>Day Shift</th>
+                                                            <th>Night Shift</th>
+                                                            <th>Half Day</th>
+                                                            <th>Absent</th>
+                                                            <th>Overtime</th>
                                                             <th>Total Amount</th>
                                                             <th>Paid Amt</th>
                                                             <th>Due Amt</th>
@@ -230,7 +240,7 @@ const LabourPaymentList = ({ handleLogout, username }) => {
                                                         ) : (
                                                             labour.map((labourer) => {
                                                                 // Destructuring the total values returned by calculateTotalAttendance
-                                                                const { totalDayShift, totalNightShift, totalOvertime, totalAmount } = calculateTotalAttendance(labourer.id);
+                                                                const { totalDayShift, totalNightShift,totalHalfDayShift,totalAbsentShift, totalOvertime, totalAmount } = calculateTotalAttendance(labourer.id);
 
                                                                 // Retrieve payment details for the current labourer
                                                                 const totalPaid = paymentDetails[labourer.id] || 0;
@@ -240,12 +250,14 @@ const LabourPaymentList = ({ handleLogout, username }) => {
                                                                     <tr key={labourer.id}>
                                                                         <td>{labourer.labourName}</td>
                                                                         <td>{labourer.labourId}</td>
-                                                                        <td>{labourer.projectName}</td>
-                                                                        <td>
+                                                                        {/* <td>{labourer.projectName}</td> */}
+                                                                        {/* <td>
                                                                             {new Date(0, selectedMonth - 1).toLocaleString("default", { month: "long" })} {selectedYear}
-                                                                        </td>
+                                                                        </td> */}
                                                                         <td>{totalDayShift} Day</td>
                                                                         <td>{totalNightShift} Night</td>
+                                                                        <td>{totalHalfDayShift} Half</td>
+                                                                        <td>{totalAbsentShift} Absent</td>
                                                                         <td>{totalOvertime} OT Hrs</td>
                                                                         <td className="text-end">&#x20B9;{totalAmount ? totalAmount.toFixed(2) : "0.00"}</td>
                                                                         <td className="text-end">&#x20B9;{totalPaid ? totalPaid.toFixed(2) : "0.00"}</td>

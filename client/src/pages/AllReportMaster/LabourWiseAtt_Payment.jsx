@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
@@ -6,29 +5,30 @@ import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "../../components/sidebar/Sidebar";
 import SearchBar from "../../components/sidebar/SearchBar";
 import { ThreeDots } from "react-loader-spinner";
-import PaymentForm from './PaymentForm';
-import PaymentHistory from './PaymentHistory';
 
-function PayLabourPayment({ handleLogout, username }) {
+function LabourWiseAtt_Payment({ handleLogout, username }) {
     const [projects, setProjects] = useState([]);
     const [labour, setLabour] = useState([]);
     const [selectedProject, setSelectedProject] = useState("");
     const [selectedLabour, setSelectedLabour] = useState("");
-    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
-    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // Current month
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());   // Current year
     const [attendanceRecords, setAttendanceRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [rates, setRates] = useState({});
-    const [totalAmount, setTotalAmount] = useState(0);
-    // paid and due 
+    const [totalAmount, setTotalAmount] = useState(0); // Track total amount
+    const [totalAttendance, setTotalAttendance] = useState(0); // Track total attendance
+    const [attendanceSummary, setAttendanceSummary] = useState({
+        dayShift: 0,
+        nightShift: 0,
+        halfDayShift: 0,
+        absentShift: 0,
+        overtime: 0
+    }); // Track attendance breakdown
+    // Payment of the labour 
     const [paymentDetails, setPaymentDetails] = useState([]);
     const [paidAmount, setPaidAmount] = useState(0);
     const [dueAmount, setDueAmount] = useState(0);
-    // Payment History 
-    const [isPaymentForm, setIsPaymentForm] = useState(false);
-    const [paymentForm, setPaymentForm] = useState(null);
-    const [paymentFormHistory, setPaymentFormHistory] = useState(null);
-    const [isPaymentHistory, setIsPaymentHistory] = useState(false);
 
     useEffect(() => {
         fetchProjects();
@@ -39,13 +39,6 @@ function PayLabourPayment({ handleLogout, username }) {
             fetchLabour(selectedProject);
         }
     }, [selectedProject]);
-
-    useEffect(() => {
-        if (selectedLabour) {
-            fetchLabourDetails(selectedLabour);
-            fetchAttendance(selectedLabour);
-        }
-    }, [selectedLabour, selectedMonth, selectedYear]);
 
     const fetchProjects = async () => {
         try {
@@ -64,7 +57,6 @@ function PayLabourPayment({ handleLogout, username }) {
             console.error("Error fetching labour:", error);
         }
     };
-
     const fetchLabourDetails = async (labourId) => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/labourdetails/${labourId}`);
@@ -98,17 +90,26 @@ function PayLabourPayment({ handleLogout, username }) {
         }
     };
 
+    // Fetch payment details when labour is selected
+    useEffect(() => {
+        if (selectedLabour) {
+            fetchLabourDetails(selectedLabour);
+            fetchAttendance(selectedLabour);
+        }
+    }, [selectedLabour, selectedMonth, selectedYear]);
 
-    const fetchAttendance = async (labourId) => {
+    const fetchAttendance = async () => {
         setIsLoading(true);
         try {
             const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/labourattendance`, {
                 params: {
-                    labourId,
+                    labourId: selectedLabour,
                     year: selectedYear,
                     month: selectedMonth,
                 },
             });
+
+            console.log("Fetched Attendance Records:", response.data.data);
             setAttendanceRecords(response.data.data);
         } catch (error) {
             console.error("Error fetching attendance:", error);
@@ -119,25 +120,48 @@ function PayLabourPayment({ handleLogout, username }) {
     };
 
     const calculateAttendanceAmount = (record) => {
-        const { dayShiftRate, nightShiftRate, halfDayShiftRate, absentShiftRate, overtimeRate } = rates; // Destructure rates state
-        console.log("rates", rates)
-
+        let attendance = "";
         let amount = 0;
-        amount += (record.dayShift || 0) * dayShiftRate;
-        amount += (record.nightShift || 0) * nightShiftRate;
-        amount += (record.halfDayShift || 0) * halfDayShiftRate;
-        amount += (record.absentShift || 0) * absentShiftRate;
-        amount += (record.overtimeHours || 0) * overtimeRate;
 
-        return {
-            amount,
-            dayShift: record.dayShift || 0,
-            nightShift: record.nightShift || 0,
-            halfDayShift: record.halfDayShift || 0,
-            absentShift: record.absentShift || 0,
-            overtime: record.overtimeHours || 0,
-        };
+        const { dayShiftRate, nightShiftRate, halfDayShiftRate, absentShiftRate, overtimeRate } = rates; // Destructure rates state
+
+        // Day Shift Calculation
+        if (record.dayShift > 0) {
+            attendance += `D - ${record.dayShift}`;
+            amount += record.dayShift * dayShiftRate;
+        }
+
+        // Night Shift Calculation
+        if (record.nightShift > 0) {
+            if (attendance) attendance += ", ";
+            attendance += `N - ${record.nightShift}`;
+            amount += record.nightShift * nightShiftRate;
+        }
+
+        // halfday Shift Calculation
+        if (record.halfDayShift > 0) {
+            if (attendance) attendance += ", ";
+            attendance += `HD - ${record.halfDayShift}`;
+            amount += record.halfDayShift * halfDayShiftRate;
+        }
+
+        // absent Shift Calculation
+        if (record.absentShift > 0) {
+            if (attendance) attendance += ", ";
+            attendance += `A - ${record.absentShift}`;
+            amount += record.absentShift * absentShiftRate;
+        }
+
+        // Overtime Calculation
+        if (record.overtimeHours > 0) {
+            if (attendance) attendance += ", ";
+            attendance += `OT - ${record.overtimeHours} Hrs`;
+            amount += record.overtimeHours * overtimeRate;
+        }
+
+        return { attendance, amount, dayShift: record.dayShift, nightShift: record.nightShift, halfDayShift: record.halfDayShift, absentShift: record.absentShift, overtime: record.overtimeHours };
     };
+
 
     const calculateTotalAmount = () => {
         return attendanceRecords.reduce((total, record) => {
@@ -146,9 +170,48 @@ function PayLabourPayment({ handleLogout, username }) {
         }, 0);
     };
 
+    // Calculate Total Attendance (total of day shifts, night shifts, and overtime hours)
+    const calculateTotalAttendance = () => {
+        return attendanceRecords.reduce((total, record) => {
+            const totalAttendanceForRecord =
+                record.dayShift + record.nightShift + record.halfDayShift + record.absentShift + record.overtimeHours;
+            return total + totalAttendanceForRecord;
+        }, 0);
+    };
+
     useEffect(() => {
+        // Accumulate attendance summary
+        let dayShiftTotal = 0;
+        let nightShiftTotal = 0;
+        let halfDayShiftTotal = 0;
+        let absentShiftTotal = 0;
+        let overtimeTotal = 0;
+
+        attendanceRecords.forEach((record) => {
+            const { dayShift, nightShift, halfDayShift, absentShift, overtime } = calculateAttendanceAmount(record);
+            dayShiftTotal += dayShift;
+            nightShiftTotal += nightShift;
+            halfDayShiftTotal += halfDayShift;
+            absentShiftTotal += absentShift;
+            overtimeTotal += overtime;
+        });
+
+        setAttendanceSummary({
+            dayShift: dayShiftTotal,
+            nightShift: nightShiftTotal,
+            halfDayShift: halfDayShiftTotal,
+            absentShift: absentShiftTotal,
+            overtime: overtimeTotal,
+        });
+
         setTotalAmount(calculateTotalAmount());
-    }, [attendanceRecords, rates]);
+        setTotalAttendance(calculateTotalAttendance());
+    }, [attendanceRecords]);
+
+
+
+    // paymentDetails  
+
 
     // Fetch payment details when labour is selected
     useEffect(() => {
@@ -157,13 +220,14 @@ function PayLabourPayment({ handleLogout, username }) {
         }
     }, [selectedLabour, selectedMonth, selectedYear]);
 
-    const fetchPaymentDetails = async (labourId, month, year) => {
+
+    const fetchPaymentDetails = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_LOCAL_URL}/labourpaymentlist/checklabour`, {
                 params: {
-                    labourId,
-                    year,
-                    month,
+                    labourId: selectedLabour,
+                    year: selectedYear,
+                    month: selectedMonth,
                 },
             });
 
@@ -180,25 +244,10 @@ function PayLabourPayment({ handleLogout, username }) {
         }
     };
 
-    // Calculate due amount based on total attendance amount and paid amount
-    useEffect(() => {
-        const calculatedDueAmount = totalAmount - paidAmount;
-        setDueAmount(calculatedDueAmount > 0 ? calculatedDueAmount : 0);
-    }, [totalAmount, paidAmount]);
-
-    // Additional helper functions remain unchanged
-
-    const handlePaymentForm = (record) => {
-        setPaymentForm(record);
-        setIsPaymentForm(true);
-    };
-    
     const handleUpdate = () => {
-        if (selectedLabour) {
-            fetchPaymentDetails(selectedLabour, selectedMonth, selectedYear);
-        }
         toast.success('Data updated successfully');
     };
+
     return (
         <div className="d-flex w-100 h-100 bg-white">
             <Sidebar />
@@ -211,7 +260,7 @@ function PayLabourPayment({ handleLogout, username }) {
                             <div className="col-md-12 d-flex justify-content-between px-3">
                                 <div className="w-100 pb-1 ">
                                     <h2 style={{ color: "#00509d" }} className="title-detail fw-bolder m-0">
-                                       Pay Labour Payment
+                                        Labour Payment
                                     </h2>
                                 </div>
                             </div>
@@ -277,12 +326,6 @@ function PayLabourPayment({ handleLogout, username }) {
                                         </select>
                                     </div>
                                 </div>
-                                <button
-                                    className="btn btn-success px-3 py-1"
-                                    onClick={() => handlePaymentForm({ labourId: selectedLabour, totalAmount, paidAmount, dueAmount, selectedMonth, selectedYear, selectedProject })}
-                                >
-                                    <i className="fa-solid fa-hand-holding-dollar"></i> Make Payment
-                                </button>
                             </div>
 
                         </div>
@@ -298,43 +341,54 @@ function PayLabourPayment({ handleLogout, username }) {
                                     </div>
                                     <hr className="m-0 p-0" />
                                     <div className="card-body">
-                                        {isLoading ? (
-                                            <div className="d-flex justify-content-center align-items-center">
-                                                <ThreeDots color="#00BFFF" height={80} width={80} />
+                                        <div className="" style={{ maxHeight: "610px", overflowY: "auto" }}>
+                                            {isLoading ? (
+                                                <div className="d-flex justify-content-center align-items-center">
+                                                    <ThreeDots color="#00BFFF" height={80} width={80} />
+                                                </div>
+                                            ) : (
+                                                <table className="table table-bordered" style={{ width: "100%" }}>
+                                                    <thead style={{ position: "sticky", top: "0", zIndex: "1", backgroundColor: "#fff" }}>
+                                                        <tr>
+                                                            <th className="text-center">Date</th>
+                                                            <th className="text-center">Day Shift</th>
+                                                            <th className="text-center">Night Shift</th>
+                                                            <th className="text-center">Half Shift</th>
+                                                            <th className="text-center">Absent</th>
+                                                            <th className="text-center">Overtime Hrs</th>
+                                                            <th className="text-center">Amount</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {attendanceRecords.map((record) => {
+                                                            const { attendance, amount } = calculateAttendanceAmount(record);
+                                                            return (
+                                                                <tr key={record.id}>
+                                                                    <td className="text-center">{new Date(record.date).toLocaleDateString()}</td>
+                                                                    {/* Check if Day Shift is greater than 0 to display "Yes" or "No" */}
+                                                                    <td className="text-center">{record.dayShift > 0 ? "Yes" : "No"}</td>
+                                                                    {/* Check if Night Shift is greater than 0 to display "Yes" or "No" */}
+                                                                    <td className="text-center">{record.nightShift > 0 ? "Yes" : "No"}</td>
+                                                                    {/* Check if Half Day Shift is greater than 0 to display "Yes" or "No" */}
+                                                                    <td className="text-center">{record.halfDayShift > 0 ? "Yes" : "No"}</td>
+                                                                    {/* Check if Absent Shift is greater than 0 to display "Yes" or "No" */}
+                                                                    <td className="text-center">{record.absentShift > 0 ? "Yes" : "No"}</td>
+                                                                    <td className="text-center">
+                                                                        {record.overtimeHours > 0 ? `${record.overtimeHours} Hrs` : "No"}
+                                                                    </td>
+                                                                    {/* Display calculated amount */}
+                                                                    <td className="text-center">Rs {amount.toFixed(2)}</td>
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                    </tbody>
+                                                </table>
+                                            )}
+                                            <div className="d-flex justify-content-end">
+                                                <strong>Total Attendance: D-{attendanceSummary.dayShift} N-{attendanceSummary.nightShift} H-{attendanceSummary.halfDayShift} A-{attendanceSummary.absentShift} OT-{attendanceSummary.overtime}</strong>
+                                                <strong className="ml-3">Total: Rs {totalAmount.toFixed(2)}</strong>
                                             </div>
-                                        ) : (
-                                            <table className="table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Labour Name</th>
-                                                        <th>Month</th>
-                                                        <th>Total Amount</th>
-                                                        <th>Paid</th>
-                                                        <th>Due</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {selectedLabour && totalAmount  ? (
-                                                        <tr>
-                                                            <td>
-                                                                {labour.find((l) => String(l.id) === String(selectedLabour))?.labourName || "N/A"}
-                                                            </td>
-                                                            <td>
-                                                                {new Date(0, selectedMonth - 1).toLocaleString("default", { month: "long" })} {selectedYear}
-                                                            </td>
-                                                            <td className='text-end'>&#x20B9;{totalAmount != null ? totalAmount.toFixed(2) : '0.00'}</td>
-                                                            <td className='text-end text-success'>&#x20B9;{paidAmount != null ? paidAmount.toFixed(2) : '0.00'}</td>
-                                                            <td className='text-end text-danger'>&#x20B9;{dueAmount != null ? dueAmount.toFixed(2) : '0.00'}</td>
-                                                        </tr>
-                                                    ) : (
-                                                        <tr>
-                                                            <td colSpan="5" className="text-center text-dark">Choosing Labour and Project</td>
-                                                        </tr>
-                                                    )}
-                                                </tbody>
-
-                                            </table>
-                                        )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -393,26 +447,30 @@ function PayLabourPayment({ handleLogout, username }) {
                             </div>
                         </div>
                     </div>
-                    {isPaymentForm && (
-                        <PaymentForm
-                            record={paymentForm}
-                            onClose={() => setIsPaymentForm(false)}
-                            onUpdate={handleUpdate}
-                        />
-                    )}
-                    {isPaymentHistory && (
-                        <PaymentHistory
-                            record={paymentFormHistory}
-                            onClose={() => setIsPaymentHistory(false)}
-                            onUpdate={handleUpdate}
-                        />
-                    )}
                 </div>
             </div>
         </div>
     );
 }
 
-export default PayLabourPayment;
+export default LabourWiseAtt_Payment;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

@@ -48,6 +48,9 @@ import ViewLabourList from './pages/UserDetails/LabourDetails/ViewLabourList';
 import ViewLabourAttendance from './pages/UserDetails/LabourDetails/ViewLabourAttendance';
 import PayLabourPayment from './pages/LabourMaster/PayLabourPayment';
 import LabourReport from './pages/AllReportMaster/LabourReport';
+import LabourUserPayment from './pages/UserDetails/LabourPayment/LabourUserPayment';
+import LabourWiseAtt_Payment from './pages/AllReportMaster/LabourWiseAtt_Payment';
+import ProjectLabourAttendance from './pages/AllReportMaster/ProjectLabourAttendance';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -152,8 +155,9 @@ const App = () => {
             <Route path="/projectmonthlyreport" element={isAuthenticated ? <UserMonthlyReport username={username} userType={userType} employeeId={employeeId} projectId={projectId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
             <Route path="/userheadreport" element={isAuthenticated ? <UserHeadReport username={username} userType={userType} employeeId={employeeId} projectId={projectId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
             <Route path="/addlabourattendance" element={isAuthenticated ? <AddLabourAttendences username={username} userType={userType} employeeId={employeeId} projectId={projectId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
-            <Route path="/viewlabourlist" element={isAuthenticated ? <ViewLabourList username={username} userType={userType} employeeId={employeeId} projectId={projectId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
+            <Route path="/viewlabourdashboard" element={isAuthenticated ? <ViewLabourList username={username} userType={userType} employeeId={employeeId} projectId={projectId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
             <Route path="/viewlabourattendance" element={isAuthenticated ? <ViewLabourAttendance username={username} userType={userType} employeeId={employeeId} projectId={projectId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
+            <Route path="/labouruserpayment" element={isAuthenticated ? <LabourUserPayment username={username} userType={userType} employeeId={employeeId} projectId={projectId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
           </>
         )}
         {/* Routes accessible by 'manager' or 'admin' */}
@@ -164,7 +168,7 @@ const App = () => {
             <Route path="/employeelist" element={isAuthenticated ? <Employeelist username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
             <Route path="/companylist" element={isAuthenticated ? <CompanyList username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
             <Route path="/cashledger" element={isAuthenticated ? <CashLedger username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
-            <Route path="/supervisorlist" element={isAuthenticated ? <SupervisorList username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
+            <Route path="/supervisorlist" element={ isAuthenticated ? <SupervisorList username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
             <Route path="/departmentlist" element={isAuthenticated ? <DepartmentList username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
             <Route path="/projectlist" element={isAuthenticated ? <ProjectList username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
             <Route path="/paymentmodelist" element={isAuthenticated ? <PaymentModeList username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
@@ -190,6 +194,8 @@ const App = () => {
             <Route path="/labourreport" element={isAuthenticated ? <LabourReport username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
             <Route path="/projectcreditdebitreport" element={isAuthenticated ? <ProjectCreditDebitReport username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
             <Route path="/approvreject" element={isAuthenticated ? <ApprovRejectList username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
+            <Route path="/labourwiseatt_pay" element={isAuthenticated ? <LabourWiseAtt_Payment username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
+            <Route path="/projectwiseattendance" element={isAuthenticated ? <ProjectLabourAttendance username={username} userType={userType} employeeId={employeeId} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
           </>
         )}
         <Route path="*" element={<PageNotFound />} />

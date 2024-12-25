@@ -147,7 +147,7 @@ function UserDashboard({ handleLogout, username }) {
             <SidebarEmployee />
             <div className='w-100'>
                 <SearchBarEmployee username={username} handleLogout={handleLogout} /> {/* Pass username and handleLogout props */}
-                <div className="container-fluid dashboardmain">
+                <div style={{overflow:"hidden"}} className=" container-fluid dashboardmain">
                     <ToastContainer />
                     <div className='rounded shadow dashboardcontainer'>
                         <div style={{ borderRadius: "10px", background: "#00509d", color: "white", background: "linear-gradient(9deg, #00509d 19%, rgb(3 86 166) 93%)", }} className="shadow-sm mb-3 usedashboardheading">
@@ -349,7 +349,6 @@ function UserDashboard({ handleLogout, username }) {
                                     </div>
                                     <div className="row no-gutters align-items-center">
                                         <div className="col mr-2">
-
                                         </div>
                                     </div>
                                     <hr className='m-0 p-0' />

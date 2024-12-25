@@ -2335,11 +2335,17 @@ app.get('/labours/lastId', (req, res) => {
   });
 });
 
-app.post('/addLabour', (req, res) => {
-  const { projectId, projectName, projectShortName, labourId, labourName, fatherName, mobileNo, gender, dayShift, nightShift, overtimeHrs, username } = req.body;
+app.post('/addLabour', employeeUpload.single('picture'), (req, res) => {
+  let picturePath = null; // Initialize brandLogoFileName as null
 
-  const sql = 'INSERT INTO labour (projectId,projectName,projectShortName,labourId,labourName,fatherName,mobileNo,gender,dayShift,nightShift,overtimeHrs,username) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-  const values = [projectId, projectName, projectShortName, labourId, labourName, fatherName, mobileNo, gender, dayShift, nightShift, overtimeHrs, username];
+  const { projectId, projectName, projectShortName, labourId, labourName, fatherName, mobileNo, gender, dayShift, nightShift,halfDayShift, overtimeHrs, username } = req.body;
+  
+  if (req.file) {
+    picturePath = req.file.filename;
+  }
+
+  const sql = 'INSERT INTO labour (projectId,projectName,projectShortName,labourId,labourName,fatherName,mobileNo,gender,dayShift,nightShift,halfDayShift,overtimeHrs,picture,username) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  const values = [projectId, projectName, projectShortName, labourId, labourName, fatherName, mobileNo, gender, dayShift, nightShift,halfDayShift, overtimeHrs,picturePath, username];
 
   db.query(sql, values, (err, result) => {
     if (err) {
@@ -2379,11 +2385,11 @@ app.delete('/deletelabour/:id', (req, res) => {
 app.put('/editLabour/:id', (req, res) => {
   const Id = parseInt(req.params.id);
 
-  const { projectId, projectName, projectShortName, labourId, labourName, fatherName, mobileNo, gender, dayShift, nightShift, overtimeHrs } = req.body;
+  const { projectId, projectName, projectShortName, labourId, labourName, fatherName, mobileNo, gender, dayShift, nightShift,halfDayShift,absentShift, overtimeHrs } = req.body;
 
-  const sql = 'UPDATE labour SET projectId = ? ,projectName = ? ,projectShortName = ? ,labourId = ? ,labourName = ? ,fatherName = ? ,mobileNo = ? ,gender = ? ,dayShift = ? ,nightShift = ? ,overtimeHrs = ? WHERE id=?';
+  const sql = 'UPDATE labour SET projectId = ? ,projectName = ? ,projectShortName = ? ,labourId = ? ,labourName = ? ,fatherName = ? ,mobileNo = ? ,gender = ? ,dayShift = ? ,nightShift = ? ,halfDayShift = ? ,absentShift = ? ,overtimeHrs = ? WHERE id=?';
 
-  db.query(sql, [projectId, projectName, projectShortName, labourId, labourName, fatherName, mobileNo, gender, dayShift, nightShift, overtimeHrs, Id], (err, result) => {
+  db.query(sql, [projectId, projectName, projectShortName, labourId, labourName, fatherName, mobileNo, gender, dayShift, nightShift,halfDayShift,absentShift, overtimeHrs, Id], (err, result) => {
     if (err) {
       console.error('Error updating Labour data:', err);
       return res.status(500).send(err);
@@ -2441,7 +2447,7 @@ app.post('/attendance', (req, res) => {
   try {
     // Iterate through the attendance array to handle each labour's record
     attendance.forEach((record) => {
-      const { labourId, dayShift, nightShift, overtime } = record;
+      const { labourId, dayShift, nightShift,halfDayShift,absentShift, overtime } = record;
 
       if (!labourId) {
         console.error('Labour ID is missing in attendance record.');
@@ -2460,10 +2466,10 @@ app.post('/attendance', (req, res) => {
           // If record exists, update it
           const updateQuery = `
             UPDATE labour_attendance 
-            SET day_shift = ?, night_shift = ?, overtime_hours = ? 
+            SET day_shift = ?, night_shift = ?, halfday_shift = ?, absent_shift = ?, overtime_hours = ? 
             WHERE labourId = ? AND date = ?
           `;
-          db.query(updateQuery, [dayShift, nightShift, overtime, labourId, date], (updateError, updateResults) => {
+          db.query(updateQuery, [dayShift, nightShift,halfDayShift,absentShift, overtime, labourId, date], (updateError, updateResults) => {
             if (updateError) {
               console.error('Error updating attendance record:', updateError);
               return res.status(500).send('Error updating attendance record');
@@ -2473,10 +2479,10 @@ app.post('/attendance', (req, res) => {
         } else {
           // If record doesn't exist, insert a new record
           const insertQuery = `
-            INSERT INTO labour_attendance (labourId, projectId, date, day_shift, night_shift, overtime_hours) 
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO labour_attendance (labourId, projectId, date, day_shift, night_shift, halfday_shift, absent_shift, overtime_hours) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
           `;
-          db.query(insertQuery, [labourId, projectId, date, dayShift, nightShift, overtime], (insertError, insertResults) => {
+          db.query(insertQuery, [labourId, projectId, date, dayShift, nightShift,halfDayShift,absentShift, overtime], (insertError, insertResults) => {
             if (insertError) {
               console.error('Error inserting new attendance record:', insertError);
               return res.status(500).send('Error inserting new attendance record');
@@ -2523,6 +2529,8 @@ app.get("/attendance", (req, res) => {
           l.labourName,
           la.day_shift,
           la.night_shift,
+          la.halfday_shift,
+          la.absent_shift,
           la.overtime_hours
       FROM 
           labour_attendance la
@@ -2568,6 +2576,8 @@ app.get('/viewattendance', async (req, res) => {
         a.date,
         a.day_shift,
         a.night_shift,
+        a.halfday_shift,
+        a.absent_shift,
         a.overtime_hours,
         l.labourName
       FROM attendance a
@@ -2585,6 +2595,8 @@ app.get('/viewattendance', async (req, res) => {
       date: row.date,
       dayShift: !!row.day_shift,
       nightShift: !!row.night_shift,
+      halfDayShift: !!row.halfday_shift,
+      absentShift: !!row.absent_shift,
       overtimeHours: row.overtime_hours || 0
     }));
 
@@ -2606,7 +2618,7 @@ app.get('/totalattendance', async (req, res) => {
   try {
     const query = `
           SELECT 
-              id, labourId, projectId, date, day_shift, night_shift, overtime_hours, created_at, updated_at
+              id, labourId, projectId, date, day_shift, night_shift,halfday_shift,absent_shift, overtime_hours, created_at, updated_at
           FROM 
               labour_attendance
           WHERE 
@@ -2881,7 +2893,7 @@ app.get("/viewattendance/:projectId", async (req, res) => {
     // Query to fetch attendance data for the given project, month, and year
     const query = `
       SELECT 
-        id, labourId, projectId, date, day_shift, night_shift, overtime_hours, created_at, updated_at
+        id, labourId, projectId, date, day_shift, night_shift,halfday_shift,absent_shift, overtime_hours, created_at, updated_at
       FROM 
         labour_attendance
       WHERE 
@@ -2919,7 +2931,7 @@ app.get('/labourattendance', async (req, res) => {
 
   try {
       const query = `
-          SELECT id, labourId, date, day_shift AS dayShift, night_shift AS nightShift, overtime_hours AS overtimeHours
+          SELECT id, labourId, date, day_shift AS dayShift, night_shift AS nightShift, halfday_shift AS halfDayShift , absent_shift AS absentShift, overtime_hours AS overtimeHours
           FROM labour_attendance
           WHERE labourId = ? AND YEAR(date) = ? AND MONTH(date) = ?
       `;
@@ -2997,6 +3009,8 @@ app.post('/labour-attendance', async (req, res) => {
               date, 
               day_shift AS dayShift, 
               night_shift AS nightShift, 
+              halfday_shift AS halfDayShift, 
+              absent_shift AS absentShift, 
               overtime_hours AS overtimeHours
           FROM 
               labour_attendance
@@ -3085,8 +3099,8 @@ app.get('/labourproject/:projectId', (req, res) => {
 });
 
 
-// check /labourpaymentlist/project/ /labourattendance paymentformdetails /labourpaymentlist/labour/ /submitPayment /makeEntry /projectData /labourpaymentlist/labour/ /api/supervisor/  /expensesledger /api/transactions/ 
-// /projectData paymentformdetails /api/paymentform/ /projectData /api/supervisor/ /ledger_entries /expensesledger /addCashPayment /changeentries/ /addPaymentModes /viewattendance/
+// check /labours/lastId empdata  /addLabour labour_attendance /attendance /labourpaymentlist/project/ /labourattendance paymentformdetails /labourpaymentlist/labour/ /submitPayment /makeEntry /projectData /labourpaymentlist/labour/ /api/supervisor/  /expensesledger /api/transactions/ 
+// /projectData  project_details paymentformdetails /api/paymentform/ /projectData /api/supervisor/ /ledger_entries /expensesledger /addCashPayment /changeentries/ /addPaymentModes /viewattendance/
 
 
 

@@ -7,6 +7,7 @@ import myLogo from '../../images/CashBackground.jpg';
 import footerLogo from '../../images/CashTransparent.png';
 import MakeEntry from '../../pages/UserDetails/EntryLedger/MakeEntry';
 import AddFundRequest from '../../pages/UserDetails/FundRequest/AddFundRequest';
+import AddNewLabour from '../../pages/UserDetails/LabourDetails/AddNewLabour';
 
 function SidebarEmployee() {
     const [style, setStyle] = useState("navbar-nav bg-gradient-primary sidebar sidebar-dark accordion");
@@ -14,6 +15,7 @@ function SidebarEmployee() {
     // Add Request Leave 
     const [dashboardLogo, setDashboardLogo] = useState([]);
     const [isEntryModalOpen, setIsAddEntryModalOpen] = useState(false); // State to manage modal open/close
+    const [isLabourModalOpen, setIsLabourModalOpen] = useState(false); // State to manage modal open/close
     const [isAddFundRequestModalOpen, setIsAddFundRequestModalOpen] = useState(false); // State to manage modal open/close
 
     useEffect(() => {
@@ -63,6 +65,15 @@ function SidebarEmployee() {
 
     const handleCloseEntryModal = () => {
         setIsAddEntryModalOpen(false);
+    };
+
+    // Add Entry Modal Handlers
+    const handleAddLabourModal = () => {
+        setIsLabourModalOpen(true);
+    };
+
+    const handleCloseLabourModal = () => {
+        setIsLabourModalOpen(false);
     };
 
     // Fund Request Modal Handlers
@@ -171,7 +182,8 @@ function SidebarEmployee() {
                             <div id="collapseLabour" className="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                                 <div className="bg-white py-2 collapse-inner rounded">
                                     <h6 className="collapse-header">Labour:</h6>
-                                    <Link to="/viewlabourlist" className="collapse-item" onClick={() => handleListClick("/viewlabourlist")}>
+                                    <a className="collapse-item" href="#" onClick={handleAddLabourModal} >Add Labour</a>
+                                    <Link to="/viewlabourdashboard" className="collapse-item" onClick={() => handleListClick("/viewlabourdashboard")}>
                                         <span>Labour List</span>
                                     </Link>
                                     <Link to="/addlabourattendance" className="collapse-item" onClick={() => handleListClick("/addlabourattendance")}>
@@ -180,7 +192,9 @@ function SidebarEmployee() {
                                     <Link to="/viewlabourattendance" className="collapse-item" onClick={() => handleListClick("/viewlabourattendance")}>
                                         <span>View Labour Attendances</span>
                                     </Link>
-                                    
+                                    <Link to="/labouruserpayment" className="collapse-item" onClick={() => handleListClick("/labouruserpayment")}>
+                                        <span>Labour Payment</span>
+                                    </Link>      
                                 </div>
                             </div>
                         </li>
@@ -202,6 +216,7 @@ function SidebarEmployee() {
                 </button>
             </body>
             {isEntryModalOpen && <MakeEntry onClose={handleCloseEntryModal} onUpdate={handleUpdate} />}
+            {isLabourModalOpen && <AddNewLabour onClose={handleCloseLabourModal} onUpdate={handleUpdate} />}
             {isAddFundRequestModalOpen && <AddFundRequest onClose={handleCloseFundRequestModal} onUpdate={handleUpdate} />}
         </div>
     )

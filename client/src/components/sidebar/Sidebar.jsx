@@ -345,6 +345,84 @@ function Sidebar() {
                 </div>
               </div>
             </li>
+
+
+            {/* Nav Item - Labour Master */}
+            <li className="nav-item">
+              <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLabourMaster"
+                aria-expanded="true" aria-controls="collapseLabourMaster">
+                <i class="fa-solid fa-money-check-dollar"></i>
+                <span>Daily Work Manager</span>
+              </a>
+              <div id="collapseLabourMaster" className="collapse" aria-labelledby="headingcategory" data-parent="#accordionSidebar">
+                <div className="bg-white py-2 collapse-inner rounded">
+                  <h6 className="collapse-header">Labour Master:</h6>
+                  <a className="collapse-item" href="#" onClick={handleAddLabour}>Add Labour</a>
+                  <Link to="/labourlist" className="collapse-item" onClick={() => handleListClick("/labourlist")}>
+                    <span>View Labour List</span>
+                  </Link>
+                  <Link to="/labourattendance" className="collapse-item" onClick={() => handleListClick("/labourattendance")}>
+                    <span>Add Attendance</span>
+                  </Link>
+                  <Link to="/viewattendance" className="collapse-item" onClick={() => handleListClick("/viewattendance")}>
+                    <span>View Attendance</span>
+                  </Link>
+                  <Link to="/paylabourAmount" className="collapse-item" onClick={() => handleListClick("/paylabourAmount")}>
+                    <span>Pay Labour Payment</span>
+                  </Link>
+                  <Link to="/labourpaymentlist" className="collapse-item" onClick={() => handleListClick("/labourpaymentlist")}>
+                    <span>Labour Payment List</span>
+                  </Link>
+                </div>
+              </div>
+            </li>
+            {/* Nav Item - Report Master */}
+            <li className="nav-item">
+              <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReport"
+                aria-expanded="true" aria-controls="collapseReport">
+                <i class="fa-solid fa-list-check"></i>
+                <span>Report master</span>
+              </a>
+              <div id="collapseReport" className="collapse" aria-labelledby="headingcategory" data-parent="#accordionSidebar">
+                <div className="bg-white py-2 collapse-inner rounded">
+                  <h6 className="collapse-header">Report Master:</h6>
+                  <Link to="/projectreport" className="collapse-item" onClick={() => handleListClick("/projectreport")}>
+                    <span>Project List Report</span>
+                  </Link>
+                  <Link to="/employeereport" className="collapse-item" onClick={() => handleListClick("/employeereport")}>
+                    <span>Employee List Report</span>
+                  </Link>
+                  <Link to="/headreport" className="collapse-item" onClick={() => handleListClick("/headreport")}>
+                    <span>Head List Report</span>
+                  </Link>
+                  <Link to="/supervisorreport" className="collapse-item" onClick={() => handleListClick("/supervisorreport")}>
+                    <span>SuperVisor Report</span>
+                  </Link>
+                  <Link to="/cashledgerreport" className="collapse-item" onClick={() => handleListClick("/cashledgerreport")}>
+                    <span>Payment Report</span>
+                  </Link>
+                  <Link to="/expensesCashreport" className="collapse-item" onClick={() => handleListClick("/expensesCashreport")}>
+                    <span>Expenses Report</span>
+                  </Link>
+                  <Link to="/pettycashreport" className="collapse-item" onClick={() => handleListClick("/pettycashreport")}>
+                    <span>Petty Cash Report</span>
+                  </Link>
+                  <Link to="/projectcreditdebitreport" className="collapse-item" onClick={() => handleListClick("/projectcreditdebitreport")}>
+                    <span>Monthly Report</span>
+                  </Link>
+                  <h6 className="collapse-header">Labour Report:</h6>
+                  <Link to="/labourwiseatt_pay" className="collapse-item" onClick={() => handleListClick("/labourwiseatt_pay")}>
+                    <span>Labour Wise Att & Pmt</span>
+                  </Link>
+                  <Link to="/labourreport" className="collapse-item" onClick={() => handleListClick("/labourreport")}>
+                    <span>Labour Report</span>
+                  </Link>
+                  <Link to="/projectwiseattendance" className="collapse-item" onClick={() => handleListClick("/projectwiseattendance")}>
+                    <span>Project Attendance</span>
+                  </Link>
+                </div>
+              </div>
+            </li>
             {/* <!-- Nav Item - Company --> */}
             <li className="nav-item">
               <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCompany"
@@ -401,12 +479,6 @@ function Sidebar() {
                   <Link to="/projectlist" className="collapse-item" onClick={() => handleListClick("/projectlist")}>
                     <span>Project List</span>
                   </Link>
-
-                  {/* <h6 className="collapse-header">Select HR Manager:</h6>
-                  <a className="collapse-item" href="#" onClick={handleAddHRManager} >Add Hr Manageer</a>
-                  <Link to="/hrmanagertimeline" className="collapse-item" onClick={() => handleListClick("/hrmanagertimeline")}>
-                    <span>HR Manager TimeLine</span>
-                  </Link> */}
                 </div>
               </div>
             </li>
@@ -456,7 +528,6 @@ function Sidebar() {
                 </div>
               </div>
             </li> */}
-
             {/* Nav Item - Payment Mode */}
             <li className="nav-item">
               <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePaymentMode"
@@ -474,78 +545,6 @@ function Sidebar() {
                 </div>
               </div>
             </li>
-
-            {/* Nav Item - Labour Master */}
-            <li className="nav-item">
-              <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLabourMaster"
-                aria-expanded="true" aria-controls="collapseLabourMaster">
-                <i class="fa-solid fa-money-check-dollar"></i>
-                <span>Labour master</span>
-              </a>
-              <div id="collapseLabourMaster" className="collapse" aria-labelledby="headingcategory" data-parent="#accordionSidebar">
-                <div className="bg-white py-2 collapse-inner rounded">
-                  <h6 className="collapse-header">Labour Master:</h6>
-                  <a className="collapse-item" href="#" onClick={handleAddLabour}>Add Labour</a>
-                  <Link to="/labourlist" className="collapse-item" onClick={() => handleListClick("/labourlist")}>
-                    <span>View Labour List</span>
-                  </Link>
-                  <Link to="/labourattendance" className="collapse-item" onClick={() => handleListClick("/labourattendance")}>
-                    <span>Add Attendance</span>
-                  </Link>
-                  <Link to="/viewattendance" className="collapse-item" onClick={() => handleListClick("/viewattendance")}>
-                    <span>View Attendance</span>
-                  </Link>
-                  <Link to="/paylabourAmount" className="collapse-item" onClick={() => handleListClick("/paylabourAmount")}>
-                    <span>Pay Labour Payment</span>
-                  </Link>
-                  <Link to="/labourpaymentlist" className="collapse-item" onClick={() => handleListClick("/labourpaymentlist")}>
-                    <span>Labour Payment List</span>
-                  </Link>
-                </div>
-              </div>
-            </li>
-
-            {/* Nav Item - Report Master */}
-            <li className="nav-item">
-              <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReport"
-                aria-expanded="true" aria-controls="collapseReport">
-                <i class="fa-solid fa-list-check"></i>
-                <span>Report master</span>
-              </a>
-              <div id="collapseReport" className="collapse" aria-labelledby="headingcategory" data-parent="#accordionSidebar">
-                <div className="bg-white py-2 collapse-inner rounded">
-                  <h6 className="collapse-header">Report Master:</h6>
-                  <Link to="/projectreport" className="collapse-item" onClick={() => handleListClick("/projectreport")}>
-                    <span>Project List Report</span>
-                  </Link>
-                  <Link to="/employeereport" className="collapse-item" onClick={() => handleListClick("/employeereport")}>
-                    <span>Employee List Report</span>
-                  </Link>
-                  <Link to="/headreport" className="collapse-item" onClick={() => handleListClick("/headreport")}>
-                    <span>Head List Report</span>
-                  </Link>
-                  <Link to="/supervisorreport" className="collapse-item" onClick={() => handleListClick("/supervisorreport")}>
-                    <span>SuperVisor Report</span>
-                  </Link>
-                  <Link to="/labourreport" className="collapse-item" onClick={() => handleListClick("/labourreport")}>
-                    <span>Labour Report</span>
-                  </Link>
-                  <Link to="/cashledgerreport" className="collapse-item" onClick={() => handleListClick("/cashledgerreport")}>
-                    <span>Payment Report</span>
-                  </Link>
-                  <Link to="/expensesCashreport" className="collapse-item" onClick={() => handleListClick("/expensesCashreport")}>
-                    <span>Expenses Report</span>
-                  </Link>
-                  <Link to="/pettycashreport" className="collapse-item" onClick={() => handleListClick("/pettycashreport")}>
-                    <span>Petty Cash Report</span>
-                  </Link>
-                  <Link to="/projectcreditdebitreport" className="collapse-item" onClick={() => handleListClick("/projectcreditdebitreport")}>
-                    <span>Monthly Report</span>
-                  </Link>
-                </div>
-              </div>
-            </li>
-
             {/* Nav Item - Total Setting */}
             <li className="nav-item">
               <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsesetting"
@@ -565,7 +564,6 @@ function Sidebar() {
                 </div>
               </div>
             </li>
-
             <hr className="sidebar-divider d-none d-md-block" />
           </ul>
         </div>

@@ -346,6 +346,7 @@ function LabourReport({ handleLogout, username }) {
                                                                 <th>Mobile</th>
                                                                 <th>Day Shift (Rs)</th>
                                                                 <th>Night Shift (Rs)</th>
+                                                                <th>Half Day (Rs)</th>
                                                                 <th>OverTime (Per Hrs)</th>
                                                             </tr>
                                                         </thead>
@@ -368,6 +369,7 @@ function LabourReport({ handleLogout, username }) {
                                                                         <td>{entry.mobileNo}</td>
                                                                         <td className="text-end">&#x20B9;{entry.dayShift ? entry.dayShift.toFixed(2) : "0.00"}</td>
                                                                         <td className="text-end">&#x20B9;{entry.nightShift ? entry.nightShift.toFixed(2) : "0.00"}</td>
+                                                                        <td className="text-end">&#x20B9;{entry.halfDayShift ? entry.halfDayShift.toFixed(2) : "0.00"}</td>
                                                                         <td className="text-end">&#x20B9;{entry.overtimeHrs ? entry.overtimeHrs.toFixed(2) : "0.00"}</td>
                                                                     </tr>
                                                                 ))

@@ -537,6 +537,7 @@ import axios from "axios";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { ThreeDots } from 'react-loader-spinner';  // <-- Correct import for spinner
+import myImage from '../../images/employee_profile.png';
 
 
 const LabourDetails = ({ labour, onClose }) => {
@@ -549,6 +550,8 @@ const LabourDetails = ({ labour, onClose }) => {
   const [attendanceSummary, setAttendanceSummary] = useState({
     dayShift: 0,
     nightShift: 0,
+    halfDayShift: 0,
+    absentShift: 0,
     overtime: 0
   }); // Track attendance breakdown
   // Payment of the labour 
@@ -559,6 +562,8 @@ const LabourDetails = ({ labour, onClose }) => {
   // Day and Night shift amounts
   const dayShiftRate = labour.dayShift;  // Example: Rs 5000 for Day Shift
   const nightShiftRate = labour.nightShift;  // Example: Rs 6000 for Night Shift
+  const halfDayShiftRate = labour.halfDayShift;  // Example: Rs 6000 for  Shift
+  const absentShiftRate = 0;  // Example: Rs 6000 for Night Shift
   const overtimeRate = labour.overtimeHrs;  // Example: Rs 100 per overtime hour
 
   useEffect(() => {
@@ -603,6 +608,20 @@ const LabourDetails = ({ labour, onClose }) => {
       amount += record.nightShift * nightShiftRate;
     }
 
+    // halfday Shift Calculation
+    if (record.halfDayShift > 0) {
+      if (attendance) attendance += ", ";
+      attendance += `HD - ${record.halfDayShift}`;
+      amount += record.halfDayShift * halfDayShiftRate;
+    }
+
+    // absent Shift Calculation
+    if (record.absentShift > 0) {
+      if (attendance) attendance += ", ";
+      attendance += `A - ${record.absentShift}`;
+      amount += record.absentShift * absentShiftRate;
+    }
+
     // Overtime Calculation
     if (record.overtimeHours > 0) {
       if (attendance) attendance += ", ";
@@ -610,7 +629,7 @@ const LabourDetails = ({ labour, onClose }) => {
       amount += record.overtimeHours * overtimeRate;
     }
 
-    return { attendance, amount, dayShift: record.dayShift, nightShift: record.nightShift, overtime: record.overtimeHours };
+    return { attendance, amount, dayShift: record.dayShift, nightShift: record.nightShift, halfDayShift: record.halfDayShift, absentShift: record.absentShift, overtime: record.overtimeHours };
   };
 
   // Calculate Total Amount
@@ -625,7 +644,7 @@ const LabourDetails = ({ labour, onClose }) => {
   const calculateTotalAttendance = () => {
     return attendanceRecords.reduce((total, record) => {
       const totalAttendanceForRecord =
-        record.dayShift + record.nightShift + record.overtimeHours;
+        record.dayShift + record.nightShift + record.halfDayShift + record.absentShift + record.overtimeHours;
       return total + totalAttendanceForRecord;
     }, 0);
   };
@@ -634,28 +653,38 @@ const LabourDetails = ({ labour, onClose }) => {
     // Accumulate attendance summary
     let dayShiftTotal = 0;
     let nightShiftTotal = 0;
+    let halfDayShiftTotal = 0;
+    let absentShiftTotal = 0;
     let overtimeTotal = 0;
 
     attendanceRecords.forEach((record) => {
-      const { dayShift, nightShift, overtime } = calculateAttendanceAmount(record);
+      const { dayShift, nightShift, halfDayShift, absentShift, overtime } = calculateAttendanceAmount(record);
       dayShiftTotal += dayShift;
       nightShiftTotal += nightShift;
+      halfDayShiftTotal += halfDayShift;
+      absentShiftTotal += absentShift;
       overtimeTotal += overtime;
     });
 
     setAttendanceSummary({
       dayShift: dayShiftTotal,
       nightShift: nightShiftTotal,
+      halfDayShift: halfDayShiftTotal,
+      absentShift: absentShiftTotal,
       overtime: overtimeTotal,
     });
+
 
     setTotalAmount(calculateTotalAmount());
     setTotalAttendance(calculateTotalAttendance());
   }, [attendanceRecords]);
+  
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
+
+
   // paymentDetails  
 
 
@@ -689,7 +718,7 @@ const LabourDetails = ({ labour, onClose }) => {
       toast.error("Failed to fetch payment details");
     }
   };
-  
+
   const handleUpdate = () => {
     toast.success('Data updated successfully');
   };
@@ -702,9 +731,14 @@ const LabourDetails = ({ labour, onClose }) => {
         <div className="row">
           <div className="col-md-9 d-flex justify-content-between px-3">
             <div className="w-100">
-              <h2 style={{ color: "#00509d" }} className="title-detail fw-bolder m-0">
-                Labour Dashboard
-              </h2>
+              <div className="d-flex align-items-center justify-content-between ">
+                <h2 style={{ color: "#00509d" }} className="title-detail fw-bolder m-0">
+                  Labour Dashboard
+                </h2>
+                <div className="">
+                  <button type="button" className="button_action" onClick={onClose}>Close</button>
+                </div>
+              </div>
               <hr className="m-0 p-0" />
               <div className="mt-2 w-100 d-flex justify-content-between">
                 <div>
@@ -719,8 +753,15 @@ const LabourDetails = ({ labour, onClose }) => {
               </div>
             </div>
           </div>
-          <div className="col-md-3 d-flex align-items-center justify-content-center">
-            <button type="button" className="button_action" onClick={onClose}>Close</button>
+          <div className="col-md-3 py-1 d-flex align-items-center justify-content-center">
+            <img
+              src={labour.picture
+                ? `${process.env.REACT_APP_LOCAL_URL}/uploads/employees/${labour.picture}`
+                : myImage}
+              style={{ width: "80px", objectFit: "cover" }}
+              alt="Employee"
+            />
+            {/* <button type="button" className="button_action" onClick={onClose}>Close</button> */}
           </div>
         </div>
         <div className="row">
@@ -749,6 +790,7 @@ const LabourDetails = ({ labour, onClose }) => {
                           <tr>
                             <th className="text-center">Day Shift</th>
                             <th className="text-center">Night Shift</th>
+                            <th className="text-center">Half Day</th>
                             <th className="text-center">Overtime Hours</th>
                           </tr>
                         </thead>
@@ -756,6 +798,7 @@ const LabourDetails = ({ labour, onClose }) => {
                           <tr>
                             <td className='text-end'>&#x20B9;{labour.dayShift != null ? labour.dayShift.toFixed(2) : '0.00'}</td>
                             <td className='text-end'>&#x20B9;{labour.nightShift != null ? labour.nightShift.toFixed(2) : '0.00'}</td>
+                            <td className='text-end'>&#x20B9;{labour.halfDayShift != null ? labour.halfDayShift.toFixed(2) : '0.00'}</td>
                             <td className='text-end'>&#x20B9;{labour.overtimeHrs != null ? labour.overtimeHrs.toFixed(2) : '0.00'}</td>
                           </tr>
                         </tbody>
@@ -860,7 +903,7 @@ const LabourDetails = ({ labour, onClose }) => {
                               </table>
                             )}
                             <div className="d-flex justify-content-end">
-                              <strong>Total Attendance: D-{attendanceSummary.dayShift} N-{attendanceSummary.nightShift} OT-{attendanceSummary.overtime}</strong>
+                              <strong>Total Attendance: D-{attendanceSummary.dayShift} N-{attendanceSummary.nightShift} H-{attendanceSummary.halfDayShift} A-{attendanceSummary.absentShift} OT-{attendanceSummary.overtime}</strong>
                               <strong className="ml-3">Total: Rs {totalAmount.toFixed(2)}</strong>
                             </div>
                           </div>
