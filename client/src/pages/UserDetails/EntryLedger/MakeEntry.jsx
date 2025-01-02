@@ -143,11 +143,11 @@ const MakeEntry = ({ onClose, onUpdate }) => {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       onUpdate();
-      onClose();
-      // setTimeout(() => {
-      //   onClose();
-      //   window.location.reload(); // Reload the page after submission
-      // }, 1000);
+      // onClose();
+      setTimeout(() => {
+        onClose();
+        window.location.reload(); // Reload the page after submission
+      }, 1000);
     } catch (error) {
       console.error('Error uploading data:', error);
       toast.error('Failed to submit entry');
