@@ -332,10 +332,11 @@ const MakeEntry = ({ onClose, onUpdate, ledgerChanges }) => {
         },
       });
       onUpdate();
-      setTimeout(() => {
-        onClose();
-        window.location.reload(); // Reload the page after submission
-      }, 1000);
+      onClose();
+      // setTimeout(() => {
+      //   onClose();
+      //   window.location.reload(); // Reload the page after submission
+      // }, 1000);
     } catch (error) {
       console.error('Error uploading data:', error);
       toast.error('Failed to submit entry');
@@ -350,7 +351,7 @@ const MakeEntry = ({ onClose, onUpdate, ledgerChanges }) => {
         <div className="modal-content">
           <form onSubmit={handleSubmit} encType="multipart/form-data" autoComplete="off" noValidate>
             <div style={{ backgroundColor: "#00509d", color: "white" }} className="modal-header">
-              <h5 className="modal-title">Make Entry</h5>
+              <h5 className="modal-title">Update Entry</h5>
               <button type="button" className="button_details" onClick={onClose}>
                 <i className="fa-solid fa-xmark"></i>
               </button>
@@ -386,7 +387,7 @@ const MakeEntry = ({ onClose, onUpdate, ledgerChanges }) => {
                     type="date"
                     className={`form-control ${errors.date ? 'is-invalid' : ''}`}
                     required
-                    value={new Date(formData.date).toLocaleDateString('en-GB')}
+                    value={formData.date}
                     placeholder='Date'
                     onChange={handleChange}
                   />

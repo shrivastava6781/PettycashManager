@@ -84,10 +84,11 @@ const AddCash = ({ onClose, onUpdate }) => {
         try {
             await axios.post(`${process.env.REACT_APP_LOCAL_URL}/addCashPayment`, formData);
             onUpdate();  // Refresh parent component data
-            setTimeout(() => {
-                onClose();
-                window.location.reload();
-            }, 1000); // 1 second delay
+            // setTimeout(() => {
+            //     onClose();
+            //     window.location.reload();
+            // }, 1000); // 1 second delay
+            onclose();
         } catch (error) {
             console.error('Error adding cash payment:', error);
             setErrors(error.response?.data?.errors || {});

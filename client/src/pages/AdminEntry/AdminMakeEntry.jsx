@@ -92,6 +92,7 @@ const AdminMakeEntry = ({ onClose, onUpdate }) => {
             ...prevData,
             projectId: selectedProjectId,
             projectName: selectedProject ? selectedProject.projectName : '',
+            projectShortName: selectedProject ? selectedProject.projectShortName : '',
         }));
 
         // Check if there's a supervisor for the selected project
@@ -158,6 +159,8 @@ const AdminMakeEntry = ({ onClose, onUpdate }) => {
         Object.keys(formData).forEach((key) => {
             formDataToSend.append(key, formData[key]);
         });
+        console.log("FormData :- ",formData)
+        console.log("fomdatato be send :- ",formDataToSend)
 
         try {
             const response = await axios.post(`${process.env.REACT_APP_LOCAL_URL}/makeEntry`, formDataToSend, {
@@ -165,12 +168,12 @@ const AdminMakeEntry = ({ onClose, onUpdate }) => {
             });
             console.log('Data uploaded successfully:', response.data);
             toast.success('Entry submitted successfully!');
-
             onUpdate();
-            setTimeout(() => {
-                onClose();
-                window.location.reload(); // Reload the page after submission
-            }, 1000);
+            onClose();
+            // setTimeout(() => {
+            //     onClose();
+            //     window.location.reload(); // Reload the page after submission
+            // }, 1000);
         } catch (error) {
             console.error('Error uploading data:', error);
             toast.error('Failed to submit entry');

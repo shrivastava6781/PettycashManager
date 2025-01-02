@@ -120,9 +120,8 @@ app.post('/login', async (req, res) => {
       const token = jwt.sign(
         { email: user.email, id: user.id },
         process.env.JWT_SECRET,
-        { expiresIn: '24h' } // Token expires in 24 hours
-      );
-
+        { expiresIn: '7d' } // Token expires in 7 days
+      );     
 
       console.log(user.username)
       console.log(user.email)
@@ -3099,8 +3098,8 @@ app.get('/labourproject/:projectId', (req, res) => {
 });
 
 
-// check /labours/lastId empdata  /addLabour labour_attendance /attendance /labourpaymentlist/project/ /labourattendance paymentformdetails /labourpaymentlist/labour/ /submitPayment /makeEntry /projectData /labourpaymentlist/labour/ /api/supervisor/  /expensesledger /api/transactions/ 
-// /projectData  project_details paymentformdetails /api/paymentform/ /projectData /api/supervisor/ /ledger_entries /expensesledger /addCashPayment /changeentries/ /addPaymentModes /viewattendance/
+// check addCashPayment /changeentries/ /labours/lastId empdata /addCashPayment /addCashPayment  /addLabour labour_attendance /attendance /labourpaymentlist/project/ /labourattendance paymentformdetails /labourpaymentlist/labour/ /submitPayment /makeEntry /projectData /labourpaymentlist/labour/ /api/supervisor/  /expensesledger /api/transactions/ 
+// /projectData /empdata/ /expensesledger /expensesledger  project_details paymentformdetails /api/paymentform/ /projectData /api/supervisor/ /ledger_entries /expensesledger /addCashPayment /changeentries/ /addPaymentModes /viewattendance/
 
 
 
