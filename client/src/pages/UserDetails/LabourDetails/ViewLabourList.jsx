@@ -143,6 +143,8 @@ import { ThreeDots } from 'react-loader-spinner'; // Spinner
 import ViewLabourDetails from "./ViewLabourDetails";
 import SidebarEmployee from "../../../components/sidebar/SidebarEmployee";
 import SearchBarEmployee from "../../../components/sidebar/SearchBarEmployee";
+import DeleteConfirmationModal from "../../DeleteConfirmationModal";
+import EditLabour from "../../LabourMaster/EditLabour";
 
 function ViewLabourList({ handleLogout, username }) {
     const [isLoading, setIsLoading] = useState(false);
@@ -150,7 +152,39 @@ function ViewLabourList({ handleLogout, username }) {
     const [selectedLabour, setSelectedLabour] = useState(null);
     const [showLabourDetails, setShowLabourDetails] = useState(false);
     const projectId = localStorage.getItem("projectId");
+    // Edit Labour 
+    const [isLabourEdit, setIsEditLabour] = useState(false);
+    const [labourDetails, setLabourDetails] = useState(null);
+    // Delete  
+    const [deleteLabour, setDeleteLabour] = useState(null);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [deleteReason, setDeleteReason] = useState("");
+    // DeleteConfirmationModal 
+    // Make changes 
+    const handlelabourDetails = (entry) => {
+        setLabourDetails(entry);
+        setIsEditLabour(true);
+    };
 
+    const handleDeleteLabour = (entry) => {
+        setDeleteLabour(entry);
+        setIsDeleteModalOpen(true);
+    };
+    const handleDeleteConfirmation = async () => {
+        try {
+            await axios.delete(`${process.env.REACT_APP_LOCAL_URL}/deletelabour/${deleteLabour.id}`);
+            setLabour((prevlabour) =>
+                prevlabour.filter((entry) => entry.id !== deleteLabour.id)
+            );
+            setIsDeleteModalOpen(false);
+            toast.success("Successfully Delete");
+            console.log("entry deleted successfully");
+        } catch (error) {
+            console.error("Error deleting entry:", error);
+        }
+    };
+
+    // Edit Delete 
     useEffect(() => {
         if (projectId) {
             fetchLabour();
@@ -182,6 +216,10 @@ function ViewLabourList({ handleLogout, username }) {
 
     const filteredRecords = labour; // Assuming no filtering logic is applied yet
 
+    const handleUpdate = () => {
+        toast.success("Successfully updated");
+    };
+
     return (
         <div className="d-flex w-100 h-100 bg-white">
             <SidebarEmployee />
@@ -202,53 +240,6 @@ function ViewLabourList({ handleLogout, username }) {
                                             </div>
                                         </div>
                                         <hr className="m-0 p-0" />
-                                        {/* <div className="card-body">
-                                            <div className="" style={{ maxHeight: "610px", overflowY: "auto" }}>
-                                                {isLoading ? (
-                                                    <div className="d-flex justify-content-center align-items-center">
-                                                        <ThreeDots color="#00BFFF" height={80} width={80} />
-                                                    </div>
-                                                ) : (
-                                                    <table className="table table-bordered" style={{ width: "100%" }}>
-                                                        <thead style={{ position: "sticky", top: "0", zIndex: "1", backgroundColor: "#fff" }}>
-                                                            <tr>
-                                                                <th>S.No</th>
-                                                                <th>Project Name</th>
-                                                                <th>Labour Name</th>
-                                                                <th>Labour ID</th>
-                                                                <th>Mobile No.</th>
-                                                                <th>Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {filteredRecords.length === 0 ? (
-                                                                <tr>
-                                                                    <td colSpan="5" className="text-center">No Labour Entries.</td>
-                                                                </tr>
-                                                            ) : (
-                                                                filteredRecords.map((entry, index) => (
-                                                                    <tr key={index}>
-                                                                        <td>{entry.projectShortName}</td>
-                                                                        <td>{entry.labourName}</td>
-                                                                        <td>{entry.labourId}</td>
-                                                                        <td>{entry.mobileNo}</td>
-                                                                        <td>
-                                                                            <button
-                                                                                style={{ whiteSpace: "nowrap" }}
-                                                                                onClick={() => handleViewDetails(entry)}
-                                                                                className="tablefont nunito m-0 p-1 button_action"
-                                                                            >
-                                                                                <i className="fas fa-eye"></i> View
-                                                                            </button>
-                                                                        </td>
-                                                                    </tr>
-                                                                ))
-                                                            )}
-                                                        </tbody>
-                                                    </table>
-                                                )}
-                                            </div>
-                                        </div> */}
                                         <div className="card-body">
                                             <div className="" style={{ maxHeight: "610px", overflowY: "auto" }}>
                                                 {isLoading ? (
@@ -287,6 +278,12 @@ function ViewLabourList({ handleLogout, username }) {
                                                                                 className="tablefont nunito m-0 p-1 button_action"
                                                                             >
                                                                                 <i className="fas fa-eye"></i> View
+                                                                            </button>
+                                                                            <button style={{ whiteSpace: "nowrap" }} onClick={() => handlelabourDetails(entry)} className="tablefont nunito m-0 p-1 button_action">
+                                                                                <i className="fas fa-edit"></i> Modify
+                                                                            </button>
+                                                                            <button style={{ whiteSpace: "nowrap" }} onClick={() => handleDeleteLabour(entry)} className="tablefont nunito m-0 p-1 button_action">
+                                                                                <i className="fa fa-trash"></i> Delete
                                                                             </button>
                                                                         </td>
                                                                     </tr>
@@ -343,13 +340,30 @@ function ViewLabourList({ handleLogout, username }) {
                                                                                 <p className="tablefont nunito m-0 p-0">
                                                                                     <span>Mobile No: </span>{request.mobileNo}
                                                                                 </p>
-                                                                                <button
-                                                                                    style={{ whiteSpace: "nowrap" }}
-                                                                                    onClick={() => handleViewDetails(request)}
-                                                                                    className="button_details py-0 px-1 tablefont"
-                                                                                >
-                                                                                    <i className="fas fa-eye"></i> View
-                                                                                </button>
+                                                                                <div className="">
+                                                                                    <button
+                                                                                        style={{ whiteSpace: "nowrap" }}
+                                                                                        onClick={() => handleViewDetails(request)}
+                                                                                        className="button_details py-0 px-1 tablefont mx-1"
+                                                                                    >
+                                                                                        View
+                                                                                    </button>
+                                                                                    <button
+                                                                                        style={{ whiteSpace: "nowrap" }}
+                                                                                        onClick={() => handlelabourDetails(request)}
+                                                                                        className="button_details py-0 px-1 tablefont mx-1"
+                                                                                    >
+                                                                                        Edit
+                                                                                    </button>
+                                                                                    <button
+                                                                                        style={{ whiteSpace: "nowrap" }}
+                                                                                        onClick={() => handleDeleteLabour(request)}
+                                                                                        className="button_details py-0 px-1 tablefont mx-1"
+                                                                                    >
+                                                                                        Delete
+                                                                                    </button>
+                                                                                </div>
+
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -371,6 +385,21 @@ function ViewLabourList({ handleLogout, username }) {
                             onClose={handleBackToTable}
                         />
                     )}
+                    {isLabourEdit && (
+                        <EditLabour
+                            labourDetails={labourDetails}
+                            onClose={() => setIsEditLabour(false)}
+                            onUpdate={handleUpdate}
+                        />
+                    )}
+                    <DeleteConfirmationModal
+                        isOpen={isDeleteModalOpen}
+                        itemName={deleteLabour ? deleteLabour.projectName : ""}
+                        onDelete={handleDeleteConfirmation}
+                        onClose={() => setIsDeleteModalOpen(false)}
+                        deleteReason={deleteReason}
+                        setDeleteReason={setDeleteReason}
+                    />
                 </div>
             </div>
         </div>

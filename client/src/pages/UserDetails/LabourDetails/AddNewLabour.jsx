@@ -138,11 +138,11 @@ const AddNewLabour = ({ onClose, onUpdate }) => {
             const response = await axios.post(`${process.env.REACT_APP_LOCAL_URL}/addLabour`, formDataToSend);
             toast.success('Labour added successfully');
             onUpdate();
-            // setTimeout(() => {
-            //     onClose();
-            //     window.location.reload();
-            // }, 1000);
-            onClose();
+            setTimeout(() => {
+                onClose();
+                window.location.reload();
+            }, 1000);
+            // onClose();
         } catch (error) {
             console.error('Error uploading data:', error);
             toast.error('Failed to add labour');

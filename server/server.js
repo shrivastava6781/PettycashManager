@@ -1794,6 +1794,100 @@ app.put('/changeentries/:id', makeEntryUpload.single('picture'), (req, res) => {
 });
 
 
+
+// Edit Labour Details 
+app.put('/editLabour/:id', employeeUpload.single('picture'), (req, res) => {
+  const id = req.params.id;
+  const {
+    projectId,
+    projectName,
+    projectShortName,
+    labourId,
+    labourName,
+    fatherName,
+    mobileNo,
+    gender,
+    dayShift,
+    nightShift,
+    halfDayShift,
+    overtimeHrs,
+    username
+  } = req.body;
+
+  // Log request body for debugging
+  console.log("Request Body:", req.body);
+
+  // Use the file's filename if a file was uploaded, otherwise keep the existing filename
+  const picture = req.file ? req.file.filename : null;
+
+  // Fetch the existing entry from the database to retain the picture if not updated
+  const sqlSelect = `SELECT picture FROM labour WHERE id = ?`;
+  db.query(sqlSelect, [id], (err, results) => {
+    if (err) {
+      console.error('Error fetching existing entry:', err);
+      return res.status(500).send('Database error');
+    }
+
+    if (results.length === 0) {
+      return res.status(404).send('Entry not found');
+    }
+
+    const existingPicture = results[0].picture;
+
+    // Update the record, keeping the existing picture if no new file is uploaded
+    const sqlUpdate = `
+      UPDATE labour 
+      SET 
+        projectId = ?, 
+        projectName = ?, 
+        projectShortName = ?, 
+        labourId = ?, 
+        labourName = ?, 
+        fatherName = ?, 
+        mobileNo = ?, 
+        gender = ?, 
+        dayShift = ?, 
+        nightShift = ?, 
+        halfDayShift = ?, 
+        overtimeHrs = ?, 
+        picture = ?, 
+        username = ?
+      WHERE id = ?
+    `;
+
+    const values = [
+      projectId,
+      projectName,
+      projectShortName,
+      labourId,
+      labourName,
+      fatherName,
+      mobileNo,
+      gender,
+      dayShift,
+      nightShift,
+      halfDayShift,
+      overtimeHrs,
+      picture || existingPicture, // Use existing picture if no new file uploaded
+      username,
+      id
+    ];
+
+    db.query(sqlUpdate, values, (err, result) => {
+      if (err) {
+        console.error('Error updating entry:', err);
+        return res.status(500).send('Database error');
+      }
+
+      res.send({ message: 'Entry updated successfully' });
+    });
+  });
+});
+
+// Edit Labour Details  
+
+
+
 // User FundRequest List
 app.get('/userfundrequest/:id', (req, res) => {
   const { id } = req.params;
@@ -2381,22 +2475,23 @@ app.delete('/deletelabour/:id', (req, res) => {
 });
 
 // Update Labour details
-app.put('/editLabour/:id', (req, res) => {
-  const Id = parseInt(req.params.id);
+// app.put('/editLabour/:id', (req, res) => {
+//   console.log(req.body);
+//   const Id = parseInt(req.params.id);
 
-  const { projectId, projectName, projectShortName, labourId, labourName, fatherName, mobileNo, gender, dayShift, nightShift,halfDayShift,absentShift, overtimeHrs } = req.body;
+//   const { projectId, projectName, projectShortName, labourId, labourName, fatherName, mobileNo, gender, dayShift, nightShift,halfDayShift,absentShift, overtimeHrs } = req.body;
 
-  const sql = 'UPDATE labour SET projectId = ? ,projectName = ? ,projectShortName = ? ,labourId = ? ,labourName = ? ,fatherName = ? ,mobileNo = ? ,gender = ? ,dayShift = ? ,nightShift = ? ,halfDayShift = ? ,absentShift = ? ,overtimeHrs = ? WHERE id=?';
+//   const sql = 'UPDATE labour SET projectId = ? ,projectName = ? ,projectShortName = ? ,labourId = ? ,labourName = ? ,fatherName = ? ,mobileNo = ? ,gender = ? ,dayShift = ? ,nightShift = ? ,halfDayShift = ? ,absentShift = ? ,overtimeHrs = ? WHERE id=?';
 
-  db.query(sql, [projectId, projectName, projectShortName, labourId, labourName, fatherName, mobileNo, gender, dayShift, nightShift,halfDayShift,absentShift, overtimeHrs, Id], (err, result) => {
-    if (err) {
-      console.error('Error updating Labour data:', err);
-      return res.status(500).send(err);
-    }
-    console.log('Labour data updated:', result);
-    res.send('Labour data updated');
-  });
-});
+//   db.query(sql, [projectId, projectName, projectShortName, labourId, labourName, fatherName, mobileNo, gender, dayShift, nightShift,halfDayShift,absentShift, overtimeHrs, Id], (err, result) => {
+//     if (err) {
+//       console.error('Error updating Labour data:', err);
+//       return res.status(500).send(err);
+//     }
+//     console.log('Labour data updated:', result);
+//     res.send('Labour data updated');
+//   });
+// });
 
 // user 
 app.get('/labours/:projectId', (req, res) => {
@@ -3098,8 +3193,8 @@ app.get('/labourproject/:projectId', (req, res) => {
 });
 
 
-// check addCashPayment /changeentries/ /labours/lastId empdata /addCashPayment /addCashPayment  /addLabour labour_attendance /attendance /labourpaymentlist/project/ /labourattendance paymentformdetails /labourpaymentlist/labour/ /submitPayment /makeEntry /projectData /labourpaymentlist/labour/ /api/supervisor/  /expensesledger /api/transactions/ 
-// /projectData /empdata/ /expensesledger /expensesledger  project_details paymentformdetails /api/paymentform/ /projectData /api/supervisor/ /ledger_entries /expensesledger /addCashPayment /changeentries/ /addPaymentModes /viewattendance/
+// check addCashPayment /editLabour/ /changeentries/ /labours/lastId empdata /addCashPayment /addCashPayment  /addLabour labour_attendance /attendance /labourpaymentlist/project/ /labourattendance paymentformdetails /labourpaymentlist/labour/ /submitPayment /makeEntry /projectData /labourpaymentlist/labour/ /api/supervisor/  /expensesledger /api/transactions/ 
+// /projectData /empdata/ /changeentries/ /expensesledger /expensesledger  project_details paymentformdetails /api/paymentform/ /projectData /api/supervisor/ /ledger_entries /expensesledger /addCashPayment /changeentries/ /addPaymentModes /viewattendance/
 
 
 

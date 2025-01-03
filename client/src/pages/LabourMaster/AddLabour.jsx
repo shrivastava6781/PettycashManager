@@ -128,6 +128,7 @@ const AddLabour = ({ onClose, onUpdate }) => {
             const response = await axios.post(`${process.env.REACT_APP_LOCAL_URL}/addLabour`, formDataToSend);
             console.log('Data uploaded successfully:', response.data);
             onUpdate();
+            onClose();
             setTimeout(() => {
                 onClose();
                 window.location.reload(); // Reload the page after submission
